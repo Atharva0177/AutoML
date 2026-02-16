@@ -511,15 +511,18 @@ def get_ml_vs_dl_recommendation(
             if col != target_column and df[col].dtype == "object":
                 avg_length = df[col].astype(str).str.len().mean()
                 unique_ratio = df[col].nunique() / len(df)
-                if avg_length > 50 or unique_ratio > 0.7:
+                # Text detection: long strings OR high cardinality (>50% unique)
+                if avg_length > 50 or unique_ratio > 0.5:
                     text_columns.append(col)
 
         if text_columns:
-            score += 60
+            # Strong signal for DL - text data needs NLP models
+            score += 75
             reasons.append(
-                f"📄 Found {len(text_columns)} text column(s) - DL handles high-cardinality text better"
+                f"📄 Found {len(text_columns)} text column(s) - Deep Learning with NLP/embeddings required"
             )
             details["text_columns"] = len(text_columns)
+            details["data_type"] = "Tabular with text (DL recommended)"
         else:
             reasons.append(
                 "📊 Structured tabular data - Traditional ML is efficient and interpretable"
@@ -530,16 +533,31 @@ def get_ml_vs_dl_recommendation(
     details["n_samples"] = n_samples
     details["n_features"] = n_features
 
+    # Don't penalize DL for medium datasets if we have text columns
+    has_text = details.get("text_columns", 0) > 0
+    
     if n_samples < 1000:
-        score -= 30
-        reasons.append(
-            f"📉 Small dataset ({n_samples:,} samples) - ML works better with limited data"
-        )
+        if not has_text:
+            score -= 30
+            reasons.append(
+                f"📉 Small dataset ({n_samples:,} samples) - ML works better with limited data"
+            )
+        else:
+            score -= 10
+            reasons.append(
+                f"📉 Small dataset ({n_samples:,} samples) - but text data still needs NLP"
+            )
     elif n_samples < 10000:
-        score -= 10
-        reasons.append(
-            f"📊 Medium dataset ({n_samples:,} samples) - ML is more sample-efficient"
-        )
+        if not has_text:
+            score -= 10
+            reasons.append(
+                f"📊 Medium dataset ({n_samples:,} samples) - ML is more sample-efficient"
+            )
+        else:
+            # Don't penalize for text data
+            reasons.append(
+                f"📊 Medium dataset ({n_samples:,} samples) - sufficient for NLP models"
+            )
     elif n_samples < 100000:
         score += 10
         reasons.append(
