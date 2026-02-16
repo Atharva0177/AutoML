@@ -913,8 +913,13 @@ def tabular_data_upload():
                     f"\u2139\ufe0f Loaded first {max_rows:,} rows. Original file may contain more data."
                 )
 
-            # Store in session state
+            # Store in session state and clear other data types
             st.session_state.data = df
+            # Clear text/image data from previous uploads
+            if "text_data" in st.session_state:
+                del st.session_state.text_data
+            if "image_data" in st.session_state:
+                del st.session_state.image_data
 
             # Check if dataset is large
             n_rows, n_cols = df.shape
@@ -995,6 +1000,9 @@ def tabular_data_upload():
                             "label_column": label_col_select,
                             "is_large": len(df) > 10000,
                         }
+                        # Clear image data from previous uploads (tabular data stays)
+                        if "image_data" in st.session_state:
+                            del st.session_state.image_data
                         st.success(
                             f"✅ Converted! Text column: '{text_col_select}', Label column: '{label_col_select}'"
                         )
@@ -1315,6 +1323,11 @@ def tabular_data_upload():
                 iris = load_iris(as_frame=True)
                 df = iris.frame  # type: ignore
                 st.session_state.data = df
+                # Clear text/image data from previous uploads
+                if "text_data" in st.session_state:
+                    del st.session_state.text_data
+                if "image_data" in st.session_state:
+                    del st.session_state.image_data
                 st.rerun()
 
         with col2:
@@ -1324,6 +1337,11 @@ def tabular_data_upload():
                 housing = fetch_california_housing(as_frame=True)
                 df = housing.frame  # type: ignore
                 st.session_state.data = df
+                # Clear text/image data from previous uploads
+                if "text_data" in st.session_state:
+                    del st.session_state.text_data
+                if "image_data" in st.session_state:
+                    del st.session_state.image_data
                 st.rerun()
 
 
@@ -1398,6 +1416,11 @@ def image_data_upload():
                         "files": image_files,
                         "labels": labels,
                     }
+                    # Clear tabular/text data from previous uploads
+                    if "data" in st.session_state:
+                        st.session_state.data = None
+                    if "text_data" in st.session_state:
+                        del st.session_state.text_data
                     st.success(
                         f"✅ Loaded {len(image_files)} images from {len(set(labels))} classes"
                     )
@@ -1577,6 +1600,11 @@ def image_data_upload():
                             "files": image_files,
                             "labels": labels,
                         }
+                        # Clear tabular/text data from previous uploads
+                        if "data" in st.session_state:
+                            st.session_state.data = None
+                        if "text_data" in st.session_state:
+                            del st.session_state.text_data
                         st.success(
                             f"✅ Loaded {len(image_files)} images from {len(set(labels))} classes"
                         )
@@ -1816,6 +1844,11 @@ def text_data_upload():
                         "label_column": label_column,
                         "is_large": True,
                     }
+                    # Clear tabular/image data from previous uploads
+                    if "data" in st.session_state:
+                        st.session_state.data = None
+                    if "image_data" in st.session_state:
+                        del st.session_state.image_data
                 else:
                     st.session_state.text_data = {
                         "texts": df[text_column].tolist(),
@@ -1824,6 +1857,11 @@ def text_data_upload():
                         "label_column": label_column,
                         "is_large": False,
                     }
+                    # Clear tabular/image data from previous uploads
+                    if "data" in st.session_state:
+                        st.session_state.data = None
+                    if "image_data" in st.session_state:
+                        del st.session_state.image_data
 
                 # Show class distribution with sampling for large datasets
                 st.markdown("**Class Distribution:**")
@@ -1867,6 +1905,11 @@ def text_data_upload():
                     "texts": [t for t, l in valid_data],
                     "labels": [l for t, l in valid_data],
                 }
+                # Clear tabular/image data from previous uploads
+                if "data" in st.session_state:
+                    st.session_state.data = None
+                if "image_data" in st.session_state:
+                    del st.session_state.image_data
                 st.success(f"✅ Saved {len(valid_data)} text samples")
             else:
                 st.warning("Please enter at least some text and labels")
@@ -2952,6 +2995,11 @@ Traditional ML will one-hot encode text, creating 10,000+ features and causing:
                     # Drop text columns and continue
                     df = df.drop(columns=text_like_columns)
                     st.session_state.data = df
+                    # Clear text/image data from previous uploads
+                    if "text_data" in st.session_state:
+                        del st.session_state.text_data
+                    if "image_data" in st.session_state:
+                        del st.session_state.image_data
                     st.success(
                         f"✅ Dropped {len(text_like_columns)} text columns: {', '.join(text_like_columns)}"
                     )
