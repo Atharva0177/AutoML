@@ -88,17 +88,17 @@ class MetricsCalculator:
             # Multi-class classification
             metrics["precision"] = float(
                 precision_score(
-                    y_true_arr, y_pred_arr, average=average, zero_division=0  # type: ignore[arg-type]
+                    y_true_arr, y_pred_arr, average=average, zero_division=0
                 )
             )
             metrics["recall"] = float(
                 recall_score(
-                    y_true_arr, y_pred_arr, average=average, zero_division=0  # type: ignore[arg-type]
+                    y_true_arr, y_pred_arr, average=average, zero_division=0
                 )
             )
             metrics["f1_score"] = float(
                 f1_score(
-                    y_true_arr, y_pred_arr, average=average, zero_division=0  # type: ignore[arg-type]
+                    y_true_arr, y_pred_arr, average=average, zero_division=0
                 )
             )
 
@@ -114,7 +114,7 @@ class MetricsCalculator:
                     # Multi-class: use one-vs-rest
                     metrics["roc_auc"] = float(
                         roc_auc_score(
-                            y_true_arr, y_pred_proba, multi_class="ovr", average=average  # type: ignore[arg-type]
+                            y_true_arr, y_pred_proba, multi_class="ovr", average=average
                         )
                     )
 
@@ -210,9 +210,9 @@ class MetricsCalculator:
             Primary metric value
         """
         if model_type == "classification":
-            return metrics.get("f1_score", metrics.get("accuracy", 0.0))
+            return float(metrics.get("f1_score", metrics.get("accuracy", 0.0)))
         else:  # regression
-            return metrics.get("r2_score", 0.0)
+            return float(metrics.get("r2_score", 0.0))
 
     @staticmethod
     def format_metrics(

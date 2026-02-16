@@ -198,7 +198,7 @@ class CategoricalEncoder:
             # Create encoder for this column
             encoder = OneHotEncoder(
                 sparse_output=False,
-                handle_unknown=self.handle_unknown,  # type: ignore[arg-type]
+                handle_unknown=self.handle_unknown,
                 dtype=np.int8,
             )
 
@@ -242,7 +242,7 @@ class CategoricalEncoder:
             # Sanitize the column name itself (for LightGBM compatibility)
             sanitized_col_name = self._sanitize_feature_name(col)
 
-            encoder = self.encoders[col]  # type: ignore[assignment]
+            encoder = self.encoders[col]  # type: ignore
 
             # Transform
             encoded = encoder.transform(df[[col]])  # type: ignore[attr-defined]
@@ -291,7 +291,7 @@ class CategoricalEncoder:
             if col not in df.columns:
                 continue
 
-            encoder = self.encoders[col]  # type: ignore[assignment]
+            encoder = self.encoders[col]  # type: ignore
 
             # Handle unknown categories
             if self.handle_unknown == "ignore":

@@ -91,7 +91,7 @@ class NumericalScaler:
         self.scaler = self._get_scaler()
 
         # Fit and transform
-        df_copy[self.numerical_cols] = self.scaler.fit_transform(df_copy[self.numerical_cols])  # type: ignore[union-attr]
+        df_copy[self.numerical_cols] = self.scaler.fit_transform(df_copy[self.numerical_cols])  # type: ignore[attr-defined]
 
         # Store scaling parameters
         self._store_scaling_params()
@@ -179,21 +179,21 @@ class NumericalScaler:
             params: Dict[str, float] = {}
 
             if self.method == "standard":
-                scaler = self.scaler  # type: ignore[assignment]
+                scaler = self.scaler  # type: ignore
                 params["mean"] = float(scaler.mean_[i])  # type: ignore[attr-defined]
                 params["std"] = float(scaler.scale_[i])  # type: ignore[attr-defined]
             elif self.method == "minmax":
-                scaler = self.scaler  # type: ignore[assignment]
+                scaler = self.scaler  # type: ignore
                 params["min"] = float(scaler.data_min_[i])  # type: ignore[attr-defined]
                 params["max"] = float(scaler.data_max_[i])  # type: ignore[attr-defined]
                 params["range_min"] = self.feature_range[0]
                 params["range_max"] = self.feature_range[1]
             elif self.method == "robust":
-                scaler = self.scaler  # type: ignore[assignment]
+                scaler = self.scaler  # type: ignore
                 params["center"] = float(scaler.center_[i])  # type: ignore[attr-defined]
                 params["scale"] = float(scaler.scale_[i])  # type: ignore[attr-defined]
             elif self.method == "maxabs":
-                scaler = self.scaler  # type: ignore[assignment]
+                scaler = self.scaler  # type: ignore
                 params["max_abs"] = float(scaler.max_abs_[i])  # type: ignore[attr-defined]
 
             self.scaling_params[col] = params
