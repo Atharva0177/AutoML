@@ -2266,36 +2266,6 @@ Current coverage: **88%** (317 tests passing)
 
 ---
 
-## 🎨 Social Card & Assets
-
-A beautiful social media card is available for sharing this project. When you share the repository link on Twitter, LinkedIn, Discord, or other platforms, this card will appear as a preview.
-
-<div align="center">
-  <img src="assets/social-card.svg" alt="AutoML Social Card" width="80%">
-</div>
-
-### Available Formats
-
-The social card is available in the [`assets/`](assets/) folder:
-
-- **`social-card.svg`** - Vector format (editable, scalable)
-- **PNG versions** - Generate using the tools provided:
-  - `generate-social-card.html` - Interactive HTML generator (open in browser)
-  - `convert-to-png.py` - Python script for batch conversion
-
-### How to Use
-
-**To set as GitHub repository social preview:**
-
-1. Navigate to `assets/` folder
-2. Open `generate-social-card.html` in your browser
-3. Click "Download PNG (1280×640)"
-4. Go to your GitHub repo → Settings → Social preview
-5. Upload the downloaded PNG file
-
-For more details, see [`assets/README.md`](assets/README.md).
-
----
 
 ## 📄 License
 
