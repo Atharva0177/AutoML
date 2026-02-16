@@ -38,9 +38,33 @@ AutoML is an enterprise-grade automated machine learning pipeline designed to si
 
 - ✅ **Truly Multi-Modal**: Supports tabular, image, and text data with specialized models for each
 - ✅ **GPU-First Design**: Automatic GPU acceleration for XGBoost, LightGBM, CatBoost, and all PyTorch models
-- ✅ **Smart Recommendations**: AI-driven model selection based on dataset characteristics
+- ✅ **Smart Recommendations**: AI-driven model selection with text column detection and auto-updating
 - ✅ **Production Ready**: Type-safe code, comprehensive testing (317 tests), error handling
 - ✅ **No Vendor Lock-in**: Open-source, runs locally, full control over your data and models
+
+### 🆕 Recent Improvements (February 2026)
+
+**Enhanced Recommendation System:**
+- ✨ **Smart Text Detection**: Automatically detects text columns in tabular data
+  - Distinguishes between metadata (Name, ID) and actual text data (reviews, messages)
+  - Requires both long text (>50 chars) AND high cardinality (>50% unique) for strong signal
+  - Text columns must be >30% of features to recommend Deep Learning
+- ✨ **Auto-Updating Recommendations**: No refresh needed when uploading new data
+  - Uploading new data automatically clears previous uploads
+  - Recommendation updates instantly based on current dataset
+  - Prevents stale recommendations from previous data
+- ✨ **Improved Scoring Logic**: Better balance for medium-sized datasets with text
+  - No penalty for text data in 1K-10K sample range
+  - SMS spam detection, review analysis work better now
+- ✨ **Fixed MLflow Logging**: Handles non-scalar metrics without errors
+  - Arrays, dictionaries, and nested structures properly filtered
+  - No more "ambiguous truth value" errors
+
+**Real-World Impact:**
+- 📧 **SMS Spam Dataset** (5,571 messages): Now correctly recommends DL (was ML)
+- 🚢 **Titanic Dataset** (891 rows, Name column): Still recommends ML (was incorrectly DL)
+- 📝 **Text Reviews**: Properly detects and recommends NLP models
+- 📊 **Standard Tabular**: Continues to recommend efficient ML models
 
 ---
 
@@ -52,7 +76,7 @@ AutoML is an enterprise-grade automated machine learning pipeline designed to si
 |---------|-------------|
 | **🎨 Multi-Modal Support** | Tabular (CSV/Excel/Parquet), Image (JPG/PNG), Text (NLP) |
 | **⚡ GPU Acceleration** | Auto-detection and optimization for CUDA-enabled GPUs |
-| **🧠 Smart Model Selection** | AI recommends ML vs DL based on data size, type, complexity |
+| **🧠 Smart Model Selection** | AI recommends ML vs DL based on data type, text detection, size, complexity |
 | **🔧 Advanced Preprocessing** | KNN/Iterative imputation, outlier detection, feature engineering |
 | **📊 27+ Models** | 18 traditional ML + 9+ deep learning architectures |
 | **🎯 Hyperparameter Tuning** | Bayesian optimization with Optuna |
@@ -532,43 +556,70 @@ flowchart TD
 
 ### Model Recommendation Algorithm
 
+**Smart Detection System:**
+- **Image/Text Data**: Automatically uses Deep Learning (100/100 score)
+- **Tabular Data**: Intelligent analysis based on multiple factors
+- **Text Column Detection**: Identifies high-cardinality text columns requiring NLP
+- **Auto-Update**: Recommendation refreshes automatically on new data upload
+
+**Text Detection Logic** (for tabular data):
+```python
+Strong Text Signals:
+- Very long text: >100 chars average (documents, articles)
+- OR both: >50 chars average AND >50% unique values (SMS, reviews)
+- Text columns must be >30% of total features to recommend DL
+- Otherwise: Minor text presence, adds +20 points only
+```
+
 ```mermaid
 graph LR
     A[Input: Dataset] --> B[Analyze Data Type]
-    B --> C{Image/Text?}
-    C -->|Yes| D[Score +75]
-    C -->|No| E[Check Size]
+    B --> C{Image/Text Upload?}
+    C -->|Yes| D[DL Required: 100/100]
+    C -->|No| E[Check Text Columns]
     
-    E --> F{Rows > 100k?}
-    F -->|Yes| G[Score +30]
-    F -->|No| H{Rows < 1k?}
-    H -->|Yes| I[Score -30]
-    H -->|No| J[Score ±10]
+    E --> F{Strong Text?}
+    F -->|Yes > 30%| G[Score +75]
+    F -->|Minor < 30%| H[Score +20]
+    F -->|No Text| I[Check Size]
     
-    D --> K[Check Features]
-    G --> K
-    I --> K
-    J --> K
+    G --> J[Check Dataset Size]
+    H --> I
+    I --> K{Rows > 100k?}
+    K -->|Yes| L[Score +30]
+    K -->|No| M{Rows < 1k?}
+    M -->|Yes| N[Score -30]
+    M -->|No| O[Score ±10]
     
-    K --> L{Features > 200?}
-    L -->|Yes| M[Score +15]
-    L -->|No| N{Features < 10?}
-    N -->|Yes| O[Score -20]
-    N -->|No| P[Score ±5]
+    J --> P{Has Text?}
+    P -->|Yes| Q[No Penalty]
+    P -->|No| L
     
-    M --> Q[Calculate Final Score]
-    O --> Q
-    P --> Q
+    Q --> R[Check Features]
+    L --> R
+    N --> R
+    O --> R
     
-    Q --> R{Score >= 60?}
-    R -->|Yes| S[Recommend: Deep Learning]
-    R -->|No| T{Score <= 40?}
-    T -->|Yes| U[Recommend: Traditional ML]
-    T -->|No| V[Recommend: Try Both]
+    R --> S{Features > 200?}
+    S -->|Yes| T[Score +15]
+    S -->|No| U{Features < 10?}
+    U -->|Yes| V[Score -20]
+    U -->|No| W[Score ±5]
     
-    style S fill:#667eea,color:#fff
-    style U fill:#11998e,color:#fff
-    style V fill:#f093fb,color:#fff
+    T --> X[Calculate Final Score]
+    V --> X
+    W --> X
+    
+    X --> Y{Score >= 60?}
+    Y -->|Yes| Z[Recommend: Deep Learning]
+    Y -->|No| AA{Score <= 40?}
+    AA -->|Yes| AB[Recommend: Traditional ML]
+    AA -->|No| AC[Recommend: Try Both]
+    
+    style D fill:#ff9f66,color:#fff
+    style Z fill:#667eea,color:#fff
+    style AB fill:#11998e,color:#fff
+    style AC fill:#f093fb,color:#fff
 ```
 
 ### Data Processing Pipeline
@@ -893,6 +944,15 @@ dataset.zip
 - Recommends conversion to NLP format if needed
 - One-click conversion available
 
+**Auto-Clear Previous Data:**
+- Uploading new data automatically clears previous uploads
+- Ensures recommendation system uses current data only
+- No manual refresh needed - recommendations update instantly
+- Behavior:
+  - **Tabular upload** → clears text_data and image_data
+  - **Text upload** → clears tabular data and image_data
+  - **Image upload** → clears tabular data and text_data
+
 **5. Data Preview Features**
 
 Once data is loaded, you'll see:
@@ -1175,35 +1235,70 @@ Don't have data? Try built-in examples:
 2. Calculates ML vs DL suitability score (0-100)
 3. Provides confidence level (High/Medium/Low)
 4. Lists specific reasons for recommendation
+5. **Auto-updates** when new data is uploaded
 
-**Recommendation Display:**
+**Recommendation Display Examples:**
+
+**For Image/Text Data:**
+```
+💡 Training Approach
+📝 NLP Models (Deep Learning)
+✅ Required (100/100) - Text data requires embeddings and sequence models
+```
+
+**For Tabular Data with Text:**
 ```
 🎯 Recommendation: Deep Learning
-Confidence: High (Score: 82/100)
+Confidence: High (Score: 90/100)
 
 Reasons:
-✓ Large dataset (150,000 samples) - DL scales better
-✓ High dimensionality (245 features) - DL excels at feature learning
-✓ Complex patterns detected - DL can capture non-linear relationships
+✓ Found 1 text column(s) with long/unique text - Deep Learning with NLP required
+✓ Medium dataset (5,571 samples) - sufficient for NLP models
+✓ High dimensionality (3,184 features) - DL excels at feature learning
+```
+
+**For Standard Tabular Data:**
+```
+🎯 Recommendation: Traditional ML
+Confidence: Medium (Score: 30/100)
+
+Reasons:
+✓ Structured tabular data - Traditional ML is efficient and interpretable
+✓ Medium dataset (891 samples) - ML is more sample-efficient
+✓ Low dimensionality (11 features) - ML sufficient for simple problems
 ```
 
 **Score Breakdown:**
 - 🟢 **Score 60-100**: Deep Learning recommended
 - 🟡 **Score 40-60**: Try both ML and DL
 - 🔵 **Score 0-40**: Traditional ML recommended
+- 🔶 **Score 100**: Deep Learning required (image/text data)
 
 **Factors Analyzed:**
-- Dataset size (rows)
-- Feature count (columns)
-- Data type (tabular/image/text)
-- Target cardinality (classification classes)
-- Data complexity (correlations, non-linearity)
+- **Data Type**: Image/text data requires Deep Learning
+- **Text Columns**: Detects high-cardinality text requiring NLP
+  - Strong signal: >100 char avg OR (>50 char + >50% unique)
+  - Must be >30% of features to heavily recommend DL
+- **Dataset Size**: Larger datasets favor Deep Learning
+  - <1K samples: ML preferred (-30 points)
+  - 1K-10K samples: No penalty for text data
+  - >100K samples: DL preferred (+30 points)
+- **Feature Count**: High dimensionality favors DL
+  - <10 features: ML sufficient (-20 points)
+  - >200 features: DL excels (+15 points)
+- **Target Cardinality**: Many classes favor DL
 
 **User Options:**
-- Follow recommendation (auto-select models)
-- Override with manual selection
-- View detailed reasoning
-- Adjust selection based on time constraints
+- **Auto Mode** (Recommended): Uses AI recommendation
+- **Manual Override**: Choose ML or DL yourself
+- **View Analysis**: See detailed reasoning
+- Warning shown if overriding recommendation
+
+**Real-World Examples:**
+- **Titanic Dataset**: 891 rows, Name column → Traditional ML ✓
+- **SMS Spam**: 5,571 messages, 80 char avg → Deep Learning ✓
+- **MNIST Images**: 60K images → Deep Learning ✓ (100/100)
+- **Review Sentiment**: Long text reviews → Deep Learning ✓
 
 #### Step 3: Preprocessing Configuration
 
