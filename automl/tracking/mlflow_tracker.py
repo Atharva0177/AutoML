@@ -225,14 +225,27 @@ class MLflowTracker:
             step: Step number for the metrics
         """
         try:
-            # Filter out None and infinite values
-            sanitized_metrics = {
-                k: float(v)
-                for k, v in metrics.items()
-                if v is not None and np.isfinite(v)
-            }
-            mlflow.log_metrics(sanitized_metrics, step=step)
-            logger.debug(f"Logged {len(sanitized_metrics)} metrics")
+            # Filter out None, infinite values, and non-scalar types
+            sanitized_metrics = {}
+            for k, v in metrics.items():
+                # Skip non-scalar types (lists, dicts, arrays)
+                if isinstance(v, (list, dict, np.ndarray)):
+                    continue
+                # Skip None values
+                if v is None:
+                    continue
+                # Convert to float and check if finite
+                try:
+                    v_float = float(v)
+                    if np.isfinite(v_float):
+                        sanitized_metrics[k] = v_float
+                except (TypeError, ValueError):
+                    # Skip values that can't be converted to float
+                    continue
+            
+            if sanitized_metrics:
+                mlflow.log_metrics(sanitized_metrics, step=step)
+                logger.debug(f"Logged {len(sanitized_metrics)} metrics")
         except Exception as e:
             logger.error(f"Error logging metrics: {e}")
 

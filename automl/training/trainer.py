@@ -500,12 +500,19 @@ class Trainer:
             # Log training metrics
             metrics = {}
 
+            # Skip non-scalar metrics like confusion_matrix and per_class_metrics
+            scalar_metrics_only = lambda d: {
+                k: v for k, v in d.items() 
+                if k not in ['confusion_matrix', 'per_class_metrics'] 
+                and not isinstance(v, (list, dict, np.ndarray))
+            }
+
             if "train_metrics" in results:
-                for k, v in results["train_metrics"].items():
+                for k, v in scalar_metrics_only(results["train_metrics"]).items():
                     metrics[f"train_{k}"] = v
 
             if "val_metrics" in results:
-                for k, v in results["val_metrics"].items():
+                for k, v in scalar_metrics_only(results["val_metrics"]).items():
                     metrics[f"val_{k}"] = v
 
             if "cross_validation" in results:
