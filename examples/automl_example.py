@@ -241,7 +241,7 @@ def example_6_model_comparison():
     # Train all available models
     results = automl.fit(
         data=df,
-        target_column="species"
+        target_column="species",
         # models_to_try=None means all models
     )
 

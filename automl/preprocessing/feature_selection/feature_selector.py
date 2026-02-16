@@ -424,8 +424,10 @@ class FeatureSelector:
             "method": self.method,
             "total_features": len(self.feature_scores_),
             "selected_features": len(self.selected_features_),
-            "selection_rate": len(self.selected_features_) / len(self.feature_scores_)
-            if self.feature_scores_
-            else 0,
+            "selection_rate": (
+                len(self.selected_features_) / len(self.feature_scores_)
+                if self.feature_scores_
+                else 0
+            ),
             "selected_feature_names": self.selected_features_,
         }

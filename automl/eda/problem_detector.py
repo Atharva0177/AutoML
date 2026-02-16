@@ -192,12 +192,14 @@ class ProblemDetector:
             "class_distribution": {str(k): int(v) for k, v in value_counts.items()},
             "is_balanced": self._check_balance(value_counts),
             "majority_class": str(value_counts.index[0]),
-            "minority_class": str(value_counts.index[1])
-            if len(value_counts) > 1
-            else None,
-            "imbalance_ratio": float(value_counts.iloc[0] / value_counts.iloc[1])
-            if len(value_counts) > 1
-            else 1.0,
+            "minority_class": (
+                str(value_counts.index[1]) if len(value_counts) > 1 else None
+            ),
+            "imbalance_ratio": (
+                float(value_counts.iloc[0] / value_counts.iloc[1])
+                if len(value_counts) > 1
+                else 1.0
+            ),
         }
 
     def _analyze_multiclass_classification(self, target: pd.Series) -> Dict[str, Any]:
@@ -229,12 +231,12 @@ class ProblemDetector:
             "std": float(target_clean.std()) if len(target_clean) > 0 else None,
             "skewness": float(target_clean.skew()) if len(target_clean) > 0 else None,  # type: ignore[arg-type]
             "kurtosis": float(target_clean.kurtosis()) if len(target_clean) > 0 else None,  # type: ignore[arg-type]
-            "is_positive_only": bool((target_clean > 0).all())
-            if len(target_clean) > 0
-            else False,
-            "has_zeros": bool((target_clean == 0).any())
-            if len(target_clean) > 0
-            else False,
+            "is_positive_only": (
+                bool((target_clean > 0).all()) if len(target_clean) > 0 else False
+            ),
+            "has_zeros": (
+                bool((target_clean == 0).any()) if len(target_clean) > 0 else False
+            ),
         }
 
     def _check_balance(self, value_counts: pd.Series, threshold: float = 0.3) -> bool:

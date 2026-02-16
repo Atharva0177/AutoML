@@ -71,13 +71,13 @@ class StatisticalProfiler:
                 "mean": float(series.mean()) if not series.isna().all() else None,
                 "std": float(series.std()) if not series.isna().all() else None,
                 "min": float(series.min()) if not series.isna().all() else None,
-                "25%": float(series.quantile(0.25))
-                if not series.isna().all()
-                else None,
+                "25%": (
+                    float(series.quantile(0.25)) if not series.isna().all() else None
+                ),
                 "50%": float(series.median()) if not series.isna().all() else None,
-                "75%": float(series.quantile(0.75))
-                if not series.isna().all()
-                else None,
+                "75%": (
+                    float(series.quantile(0.75)) if not series.isna().all() else None
+                ),
                 "max": float(series.max()) if not series.isna().all() else None,
                 "skewness": float(series.skew()) if not series.isna().all() else None,  # type: ignore[arg-type]
                 "kurtosis": float(series.kurtosis()) if not series.isna().all() else None,  # type: ignore[arg-type]
@@ -102,17 +102,17 @@ class StatisticalProfiler:
                 "missing": int(series.isna().sum()),
                 "missing_percentage": float(series.isna().sum() / len(series) * 100),
                 "unique": int(series.nunique()),
-                "most_frequent": str(value_counts.index[0])
-                if len(value_counts) > 0
-                else None,
-                "most_frequent_count": int(value_counts.iloc[0])
-                if len(value_counts) > 0
-                else 0,
-                "most_frequent_percentage": float(
-                    value_counts.iloc[0] / len(series) * 100
-                )
-                if len(value_counts) > 0
-                else 0.0,
+                "most_frequent": (
+                    str(value_counts.index[0]) if len(value_counts) > 0 else None
+                ),
+                "most_frequent_count": (
+                    int(value_counts.iloc[0]) if len(value_counts) > 0 else 0
+                ),
+                "most_frequent_percentage": (
+                    float(value_counts.iloc[0] / len(series) * 100)
+                    if len(value_counts) > 0
+                    else 0.0
+                ),
                 "top_5_values": value_counts.head(5).to_dict(),
                 "is_high_cardinality": series.nunique() > len(series) * 0.5,
                 "cardinality_ratio": float(series.nunique() / len(series)),
@@ -131,9 +131,9 @@ class StatisticalProfiler:
         return {
             "total_missing": total_missing,
             "total_cells": total_cells,
-            "missing_percentage": float(total_missing / total_cells * 100)
-            if total_cells > 0
-            else 0.0,
+            "missing_percentage": (
+                float(total_missing / total_cells * 100) if total_cells > 0 else 0.0
+            ),
             "columns_with_missing": len(columns_with_missing),
             "missing_by_column": {k: int(v) for k, v in columns_with_missing.items()},
             "completely_missing_columns": list(df.columns[df.isna().all()]),

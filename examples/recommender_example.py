@@ -189,8 +189,7 @@ for i, rec in enumerate(recommendations, 1):
 print("\n" + "=" * 80)
 print("Key Takeaways:")
 print("=" * 80)
-print(
-    """
+print("""
 The Model Recommendation Engine helps you:
 
 1. Save Time: Automatically identifies best models without manual trial & error
@@ -208,5 +207,4 @@ The recommender considers:
 - Problem type (classification vs regression)
 
 Try it with your own datasets!
-"""
-)
+""")

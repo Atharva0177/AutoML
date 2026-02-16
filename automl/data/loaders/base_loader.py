@@ -65,9 +65,9 @@ class BaseLoader(ABC):
         metadata = {
             "filepath": str(filepath),
             "file_size_bytes": filepath.stat().st_size if filepath.exists() else 0,
-            "file_size_formatted": format_bytes(filepath.stat().st_size)
-            if filepath.exists()
-            else "0 B",
+            "file_size_formatted": (
+                format_bytes(filepath.stat().st_size) if filepath.exists() else "0 B"
+            ),
             "n_rows": len(df),
             "n_columns": len(df.columns),
             "columns": list(df.columns),

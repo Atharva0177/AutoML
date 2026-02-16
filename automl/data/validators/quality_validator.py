@@ -67,9 +67,9 @@ class QualityValidator:
 
         return {
             "total_missing": int(missing_cells),
-            "percentage": float(missing_cells / total_cells * 100)
-            if total_cells > 0
-            else 0,
+            "percentage": (
+                float(missing_cells / total_cells * 100) if total_cells > 0 else 0
+            ),
             "by_column": missing_by_column,
         }
 

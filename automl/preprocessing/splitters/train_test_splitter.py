@@ -308,12 +308,16 @@ class DataSplitter:
                 "train_ratio": len(X_train) / (len(X_train) + len(X_test)),
                 "test_ratio": len(X_test) / (len(X_train) + len(X_test)),
                 "num_features": X_train.shape[1],
-                "target_distribution_train": y_train.value_counts().to_dict()
-                if hasattr(y_train.dtype, "categories") or y_train.nunique() < 20
-                else None,
-                "target_distribution_test": y_test.value_counts().to_dict()
-                if hasattr(y_test.dtype, "categories") or y_test.nunique() < 20
-                else None,
+                "target_distribution_train": (
+                    y_train.value_counts().to_dict()
+                    if hasattr(y_train.dtype, "categories") or y_train.nunique() < 20
+                    else None
+                ),
+                "target_distribution_test": (
+                    y_test.value_counts().to_dict()
+                    if hasattr(y_test.dtype, "categories") or y_test.nunique() < 20
+                    else None
+                ),
             }
         elif len(split_data) == 6:
             X_train, X_val, X_test, y_train, y_val, y_test = split_data
@@ -327,15 +331,21 @@ class DataSplitter:
                 "val_ratio": len(X_val) / total,
                 "test_ratio": len(X_test) / total,
                 "num_features": X_train.shape[1],
-                "target_distribution_train": y_train.value_counts().to_dict()
-                if hasattr(y_train.dtype, "categories") or y_train.nunique() < 20
-                else None,
-                "target_distribution_val": y_val.value_counts().to_dict()
-                if hasattr(y_val.dtype, "categories") or y_val.nunique() < 20
-                else None,
-                "target_distribution_test": y_test.value_counts().to_dict()
-                if hasattr(y_test.dtype, "categories") or y_test.nunique() < 20
-                else None,
+                "target_distribution_train": (
+                    y_train.value_counts().to_dict()
+                    if hasattr(y_train.dtype, "categories") or y_train.nunique() < 20
+                    else None
+                ),
+                "target_distribution_val": (
+                    y_val.value_counts().to_dict()
+                    if hasattr(y_val.dtype, "categories") or y_val.nunique() < 20
+                    else None
+                ),
+                "target_distribution_test": (
+                    y_test.value_counts().to_dict()
+                    if hasattr(y_test.dtype, "categories") or y_test.nunique() < 20
+                    else None
+                ),
             }
         else:
             raise ValidationError(

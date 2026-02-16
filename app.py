@@ -459,9 +459,9 @@ def sanitize_for_excel(df):
         if df_clean[col].dtype == "object":
             try:
                 df_clean[col] = df_clean[col].apply(
-                    lambda x: re.sub(illegal_chars_pattern, "", str(x))
-                    if pd.notna(x)
-                    else x
+                    lambda x: (
+                        re.sub(illegal_chars_pattern, "", str(x)) if pd.notna(x) else x
+                    )
                 )
             except:
                 pass
@@ -499,7 +499,9 @@ def get_ml_vs_dl_recommendation(
         details["data_type"] = "Image (DL required)"
     elif data_type == "text":
         score += 75
-        reasons.append("📝 Text data - Deep Learning with embeddings handles NLP better")
+        reasons.append(
+            "📝 Text data - Deep Learning with embeddings handles NLP better"
+        )
         details["data_type"] = "Text (DL recommended)"
     else:
         # Check for text-like columns in tabular data
@@ -671,8 +673,7 @@ def main():
 
         st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
         st.markdown("### About")
-        st.info(
-            """
+        st.info("""
         **AutoML System v1.0.0** 🚀
         
         Automated machine learning pipeline with:
@@ -696,13 +697,11 @@ def main():
           - 📝 NLP: LSTM/GRU/TextCNN/Attention
         - Interactive visualizations
         - Model export & download
-        """
-        )
+        """)
 
         # Performance tips
         with st.expander("\u26a1 Performance Tips"):
-            st.markdown(
-                """
+            st.markdown("""
             **For Large Datasets:**
             
             1. **Limit Rows**: Use advanced loading options to load only a subset
@@ -718,8 +717,7 @@ def main():
             6. **Downloads**: For large datasets, click generate button first
             
             7. **Visualizations**: Based on samples, not full dataset
-            """
-            )
+            """)
 
     # Main content based on selected page
     if page == "📁 Data Upload":
@@ -898,14 +896,12 @@ def tabular_data_upload():
                 st.warning(f"⚠️ **Text columns detected:** {', '.join(text_columns)}")
 
                 with st.expander("🔄 Convert to Text Data Format", expanded=True):
-                    st.info(
-                        """
+                    st.info("""
                     💡 **For text data (reviews, descriptions, etc.):**
                     - Use the **📝 Text Data** upload option instead
                     - This enables NLP models (LSTM, GRU, CNN, Attention)
                     - Traditional ML will struggle with high-cardinality text
-                    """
-                    )
+                    """)
 
                     # Let user select text and label columns
                     st.markdown("**Quick Setup:**")
@@ -1000,9 +996,7 @@ def tabular_data_upload():
                     <div style='font-size: 2.5rem; font-weight: bold;'>{:,}</div>
                     <div style='font-size: 0.9rem; opacity: 0.9;'>ROWS</div>
                 </div>
-                """.format(
-                        len(df)
-                    ),
+                """.format(len(df)),
                     unsafe_allow_html=True,
                 )
 
@@ -1013,9 +1007,7 @@ def tabular_data_upload():
                     <div style='font-size: 2.5rem; font-weight: bold;'>{}</div>
                     <div style='font-size: 0.9rem; opacity: 0.9;'>COLUMNS</div>
                 </div>
-                """.format(
-                        len(df.columns)
-                    ),
+                """.format(len(df.columns)),
                     unsafe_allow_html=True,
                 )
 
@@ -1039,9 +1031,7 @@ def tabular_data_upload():
                     <div style='font-size: 2.5rem; font-weight: bold;'>{:.1f}%</div>
                     <div style='font-size: 0.9rem; opacity: 0.9;'>MISSING</div>
                 </div>
-                """.format(
-                        missing_pct
-                    ),
+                """.format(missing_pct),
                     unsafe_allow_html=True,
                 )
 
@@ -1053,9 +1043,7 @@ def tabular_data_upload():
                     <div style='font-size: 2.5rem; font-weight: bold;'>{:.1f}</div>
                     <div style='font-size: 0.9rem; opacity: 0.9;'>MB</div>
                 </div>
-                """.format(
-                        memory_mb
-                    ),
+                """.format(memory_mb),
                     unsafe_allow_html=True,
                 )
 
@@ -1302,12 +1290,10 @@ def tabular_data_upload():
 
 def image_data_upload():
     """Image data upload interface."""
-    st.markdown(
-        """
+    st.markdown("""
     Upload images for classification. You can upload a ZIP file, specify a folder path,
     or upload individual images and specify labels.
-    """
-    )
+    """)
 
     upload_mode = st.radio(
         "Upload Mode:",
@@ -1320,8 +1306,7 @@ def image_data_upload():
     )
 
     if "ZIP" in upload_mode:
-        st.info(
-            """📦 **ZIP Structure:**
+        st.info("""📦 **ZIP Structure:**
         ```
         dataset.zip
         ├── class1/
@@ -1331,8 +1316,7 @@ def image_data_upload():
             ├── image3.jpg
             └── image4.jpg
         ```
-        """
-        )
+        """)
 
         uploaded_zip = st.file_uploader("Upload ZIP file", type=["zip"])
 
@@ -1389,8 +1373,7 @@ def image_data_upload():
                     st.warning("No images found in ZIP file")
 
     elif "Folder" in upload_mode:
-        st.info(
-            """📂 **Folder Structure:**
+        st.info("""📂 **Folder Structure:**
         ```
         your_folder/
         ├── class1/
@@ -1401,8 +1384,7 @@ def image_data_upload():
             └── image4.jpg
         ```
         Each subfolder name will be used as the class label.
-        """
-        )
+        """)
 
         # Initialize session state for folder path
         if "selected_folder_path" not in st.session_state:
@@ -1484,9 +1466,11 @@ def image_data_upload():
                     # Open folder selection dialog
                     selected_folder = filedialog.askdirectory(
                         title="Select Image Folder",
-                        initialdir=st.session_state.selected_folder_path
-                        if st.session_state.selected_folder_path
-                        else None,
+                        initialdir=(
+                            st.session_state.selected_folder_path
+                            if st.session_state.selected_folder_path
+                            else None
+                        ),
                     )
 
                     # Clean up
@@ -1496,7 +1480,9 @@ def image_data_upload():
                         st.session_state.selected_folder_path = selected_folder
                         st.rerun()
                 except ImportError:
-                    st.error("❌ Tkinter not available. Please enter the path manually.")
+                    st.error(
+                        "❌ Tkinter not available. Please enter the path manually."
+                    )
                 except Exception as e:
                     st.error(f"❌ Error opening folder browser: {str(e)}")
 
@@ -1589,11 +1575,9 @@ def image_data_upload():
 
 def text_data_upload():
     """Text data upload interface."""
-    st.markdown(
-        """
+    st.markdown("""
     Upload text data for classification (sentiment analysis, topic classification, etc.)
-    """
-    )
+    """)
 
     # Performance options for large text datasets
     with st.expander("⚙️ Advanced Loading Options"):
@@ -1623,13 +1607,11 @@ def text_data_upload():
     )
 
     if "CSV" in upload_mode:
-        st.info(
-            """📊 **CSV Format:**
+        st.info("""📊 **CSV Format:**
         Your CSV should have at least two columns:
         - One column for the text
         - One column for the label/class
-        """
-        )
+        """)
 
         uploaded_file = st.file_uploader(
             "Upload CSV file", type=["csv"], help="CSV with text and labels"
@@ -2542,15 +2524,19 @@ def eda_dashboard_page():
                                     sample_df[col].nunique() for col in analysis_cols
                                 ],
                                 "Most Frequent": [
-                                    sample_df[col].mode()[0]
-                                    if len(sample_df[col].mode()) > 0
-                                    else None
+                                    (
+                                        sample_df[col].mode()[0]
+                                        if len(sample_df[col].mode()) > 0
+                                        else None
+                                    )
                                     for col in analysis_cols
                                 ],
                                 "Frequency": [
-                                    sample_df[col].value_counts().iloc[0]
-                                    if len(sample_df[col]) > 0
-                                    else 0
+                                    (
+                                        sample_df[col].value_counts().iloc[0]
+                                        if len(sample_df[col]) > 0
+                                        else 0
+                                    )
                                     for col in analysis_cols
                                 ],
                             }
@@ -2569,15 +2555,19 @@ def eda_dashboard_page():
                                     df[col].nunique() for col in categorical_cols
                                 ],
                                 "Most Frequent": [
-                                    df[col].mode()[0]
-                                    if len(df[col].mode()) > 0
-                                    else None
+                                    (
+                                        df[col].mode()[0]
+                                        if len(df[col].mode()) > 0
+                                        else None
+                                    )
                                     for col in categorical_cols
                                 ],
                                 "Frequency": [
-                                    df[col].value_counts().iloc[0]
-                                    if len(df[col]) > 0
-                                    else 0
+                                    (
+                                        df[col].value_counts().iloc[0]
+                                        if len(df[col]) > 0
+                                        else 0
+                                    )
                                     for col in categorical_cols
                                 ],
                             }
@@ -3232,15 +3222,19 @@ Traditional ML will one-hot encode text, creating 10,000+ features and causing:
                 selected_models = st.multiselect(
                     "Select models to train:",
                     options=available_models,
-                    default=available_models[:3]
-                    if len(available_models) >= 3
-                    else available_models,
+                    default=(
+                        available_models[:3]
+                        if len(available_models) >= 3
+                        else available_models
+                    ),
                     help="Choose one or more models to train and compare",
                 )
 
                 if selected_models:
                     models_to_train = selected_models
-                    st.success(f"✅ Selected **{len(selected_models)} models** to train")
+                    st.success(
+                        f"✅ Selected **{len(selected_models)} models** to train"
+                    )
                 else:
                     st.warning(
                         "⚠️ No models selected. Will use auto recommendation (top 3)."
@@ -4864,9 +4858,11 @@ Traditional ML will one-hot encode text, creating 10,000+ features and causing:
                                         "Architecture": r["architecture"].upper(),
                                         "Train Accuracy": f"{r['train_accuracy']:.2%}",
                                         "Val Accuracy": f"{r['val_accuracy']:.2%}",
-                                        "Status": "🏆 Best"
-                                        if r["architecture"] == best_arch
-                                        else "",
+                                        "Status": (
+                                            "🏆 Best"
+                                            if r["architecture"] == best_arch
+                                            else ""
+                                        ),
                                     }
                                     for r in sorted(
                                         all_results,
@@ -5802,9 +5798,7 @@ def results_page():
                 <div class='stat-label' style='color: rgba(255,255,255,0.9);'>Model Type</div>
                 <div class='stat-value' style='color: #fee140 !important; -webkit-text-fill-color: #fee140 !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);'>{}</div>
             </div>
-            """.format(
-                    results.get("model_type", "N/A")
-                ),
+            """.format(results.get("model_type", "N/A")),
                 unsafe_allow_html=True,
             )
 
@@ -5818,9 +5812,7 @@ def results_page():
                     <div class='stat-label' style='color: rgba(255,255,255,0.9);'>Val Accuracy</div>
                     <div class='stat-value' style='color: white !important; -webkit-text-fill-color: white !important;'>{:.2%}</div>
                 </div>
-                """.format(
-                        acc_color, results["val_accuracy"]
-                    ),
+                """.format(acc_color, results["val_accuracy"]),
                     unsafe_allow_html=True,
                 )
 
@@ -5832,9 +5824,7 @@ def results_page():
                         <div class='stat-label' style='color: rgba(255,255,255,0.9);'>Train Accuracy</div>
                         <div class='stat-value' style='color: white !important; -webkit-text-fill-color: white !important;'>{:.2%}</div>
                     </div>
-                    """.format(
-                            results["train_accuracy"]
-                        ),
+                    """.format(results["train_accuracy"]),
                         unsafe_allow_html=True,
                     )
         elif "test_accuracy" in results:  # MLP models
@@ -5846,9 +5836,7 @@ def results_page():
                     <div class='stat-label' style='color: rgba(255,255,255,0.9);'>Test Accuracy</div>
                     <div class='stat-value' style='color: white !important; -webkit-text-fill-color: white !important;'>{:.2%}</div>
                 </div>
-                """.format(
-                        acc_color, results["test_accuracy"]
-                    ),
+                """.format(acc_color, results["test_accuracy"]),
                     unsafe_allow_html=True,
                 )
 
@@ -5860,9 +5848,7 @@ def results_page():
                         <div class='stat-label' style='color: rgba(255,255,255,0.9);'>Train Accuracy</div>
                         <div class='stat-value' style='color: white !important; -webkit-text-fill-color: white !important;'>{:.2%}</div>
                     </div>
-                    """.format(
-                            results["train_accuracy"]
-                        ),
+                    """.format(results["train_accuracy"]),
                         unsafe_allow_html=True,
                     )
         elif "test_mse" in results:
@@ -5873,9 +5859,7 @@ def results_page():
                     <div class='stat-label' style='color: rgba(255,255,255,0.9);'>Test MSE</div>
                     <div class='stat-value' style='color: white !important; -webkit-text-fill-color: white !important;'>{:.4f}</div>
                 </div>
-                """.format(
-                        results["test_mse"]
-                    ),
+                """.format(results["test_mse"]),
                     unsafe_allow_html=True,
                 )
 
@@ -5886,9 +5870,7 @@ def results_page():
                     <div class='stat-label' style='color: rgba(255,255,255,0.9);'>Test R²</div>
                     <div class='stat-value' style='color: white !important; -webkit-text-fill-color: white !important;'>{:.4f}</div>
                 </div>
-                """.format(
-                        results.get("test_r2", 0)
-                    ),
+                """.format(results.get("test_r2", 0)),
                     unsafe_allow_html=True,
                 )
 
@@ -5899,9 +5881,7 @@ def results_page():
                 <div class='stat-label' style='color: rgba(255,255,255,0.9);'>Epochs</div>
                 <div class='stat-value' style='color: white !important; -webkit-text-fill-color: white !important;'>{}</div>
             </div>
-            """.format(
-                    config.get("max_epochs", "N/A")
-                ),
+            """.format(config.get("max_epochs", "N/A")),
                 unsafe_allow_html=True,
             )
 
@@ -6132,7 +6112,9 @@ def results_page():
                     with col_info1:
                         if train_acc_key and history.get(train_acc_key):
                             max_train_acc = max(history[train_acc_key])
-                            st.success(f"🎯 **Max Train Accuracy:** {max_train_acc:.2%}")
+                            st.success(
+                                f"🎯 **Max Train Accuracy:** {max_train_acc:.2%}"
+                            )
                     with col_info2:
                         if val_acc_key and history.get(val_acc_key):
                             max_val_acc = max(history[val_acc_key])
@@ -6260,9 +6242,7 @@ def results_page():
             <div class='stat-label'>Best Model</div>
             <div class='stat-value' style='font-size: 1.2rem;'>{}</div>
         </div>
-        """.format(
-                results.get("best_model", "N/A")
-            ),
+        """.format(results.get("best_model", "N/A")),
             unsafe_allow_html=True,
         )
 
@@ -6273,9 +6253,7 @@ def results_page():
             <div class='stat-label'>{}</div>
             <div class='stat-value'>{:.4f}</div>
         </div>
-        """.format(
-                metric_label, best_model_accuracy
-            ),
+        """.format(metric_label, best_model_accuracy),
             unsafe_allow_html=True,
         )
 
@@ -6286,9 +6264,7 @@ def results_page():
             <div class='stat-label'>Problem Type</div>
             <div class='stat-value' style='font-size: 1.2rem;'>{}</div>
         </div>
-        """.format(
-                results.get("problem_type", "N/A").upper()
-            ),
+        """.format(results.get("problem_type", "N/A").upper()),
             unsafe_allow_html=True,
         )
 
@@ -6299,9 +6275,7 @@ def results_page():
             <div class='stat-label'>Models Tested</div>
             <div class='stat-value'>{}</div>
         </div>
-        """.format(
-                len(rankings)
-            ),
+        """.format(len(rankings)),
             unsafe_allow_html=True,
         )
 
@@ -6789,15 +6763,13 @@ def results_page():
 
         with col1:
             st.markdown("**Model Details:**")
-            st.info(
-                f"""
+            st.info(f"""
             **Model:** {results.get('best_model', 'N/A')}  
             **{metric_label}:** {best_model_accuracy:.4f}  
             **Problem Type:** {results.get('problem_type', 'N/A')}  
             **Features:** {results.get('n_features', 'N/A')}  
             **Training Samples:** {results.get('n_samples_train', 'N/A')}
-            """
-            )
+            """)
 
         with col2:
             st.markdown("**MLflow Tracking:**")
@@ -6836,8 +6808,7 @@ def quick_start_page():
     """Quick start guide and examples."""
     st.title("🚀 Quick Start Guide")
 
-    st.markdown(
-        """
+    st.markdown("""
     Welcome to the **AutoML System v1.0.0**! This guide will help you get started with both traditional ML and deep learning models.
     
     ### ✨ Latest Updates (v1.0.0):
@@ -6846,8 +6817,7 @@ def quick_start_page():
     - 🖼️ **Enhanced Vision**: VGG16/19, DenseNet121/169 added to CNN architectures
     - 🤖 **Smart Recommendations**: AI suggests ML vs DL based on your dataset
     - ⚡ **27+ Models**: Expanded from 6 to 27 total models available
-    """
-    )
+    """)
 
     # Feature Overview
     st.markdown("## 🎯 Key Features")
@@ -6855,8 +6825,7 @@ def quick_start_page():
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.markdown(
-            """
+        st.markdown("""
         ### 📊 Tabular Data
         - **Traditional ML (18 models)**: 
           - XGBoost*, LightGBM*, CatBoost* (GPU)
@@ -6872,12 +6841,10 @@ def quick_start_page():
         - HPO with Optuna
         
         *GPU accelerated
-        """
-        )
+        """)
 
     with col2:
-        st.markdown(
-            """
+        st.markdown("""
         ### 🖼️ Image Data
         - **Custom CNNs**: SimpleCNN, MediumCNN
         - **Transfer Learning (9 models)**:
@@ -6889,12 +6856,10 @@ def quick_start_page():
         - GPU acceleration
         - Fine-tuning support
         - Pretrained weights
-        """
-        )
+        """)
 
     with col3:
-        st.markdown(
-            """
+        st.markdown("""
         ### 📝 Text Data
         - **RNNs**: LSTM, GRU
         - **TextCNN**: Fast classification
@@ -6903,16 +6868,14 @@ def quick_start_page():
         - Embedding support
         - Multi-class support
         - GPU acceleration
-        """
-        )
+        """)
 
     st.markdown("---")
 
     # GPU Support Info
     st.markdown("## ⚡ GPU Acceleration")
 
-    st.info(
-        """
+    st.info("""
     **Automatic GPU Support** - The system automatically detects and uses GPU when available:
     
     - **Traditional ML**: XGBoost, LightGBM, and CatBoost use GPU automatically (2-10x speedup)
@@ -6921,16 +6884,14 @@ def quick_start_page():
     - **Status**: GPU status is shown in the Hardware Status section during training
     
     💡 **Requirements**: CUDA-capable GPU + CUDA toolkit + GPU-enabled PyTorch
-    """
-    )
+    """)
 
     st.markdown("---")
 
     # Workflow
     st.markdown("## 📋 Workflow")
 
-    st.markdown(
-        """
+    st.markdown("""
     ### Step 1: Upload Data
     Navigate to **📁 Data Upload** and:
     - Select your data type (Tabular, Image, or Text)
@@ -6957,8 +6918,7 @@ def quick_start_page():
     - Training history (DL models)
     - Model comparison
     - Export trained models
-    """
-    )
+    """)
 
     st.markdown("---")
 
@@ -7072,47 +7032,39 @@ def quick_start_page():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(
-            """
+        st.markdown("""
         ### General Tips
         - **Start simple**: Use default settings first
         - **Check data quality**: Handle missing values and outliers
         - **Use cross-validation**: More robust evaluation
         - **Enable MLflow**: Track all experiments
-        """
-        )
+        """)
 
-        st.markdown(
-            """
+        st.markdown("""
         ### Traditional ML
         - **Feature engineering**: Often improves performance
         - **Feature selection**: Reduces overfitting
         - **HPO**: Let Optuna find best hyperparameters
         - **Ensemble**: Combine multiple models
-        """
-        )
+        """)
 
     with col2:
-        st.markdown(
-            """
+        st.markdown("""
         ### Deep Learning
         - **GPU**: Enable for 10-50x speedup
         - **Batch size**: Larger = faster, but needs more memory
         - **Learning rate**: Start with 0.001
         - **Early stopping**: Prevents overfitting
         - **Data augmentation**: Essential for images
-        """
-        )
+        """)
 
-        st.markdown(
-            """
+        st.markdown("""
         ### Troubleshooting
         - **Low accuracy**: Try more epochs, different architecture
         - **Overfitting**: Increase dropout, reduce model size
         - **Slow training**: Reduce batch size, use simpler model
         - **Out of memory**: Reduce batch size or image size
-        """
-        )
+        """)
 
     st.markdown("---")
 
@@ -7218,34 +7170,28 @@ probabilities = model.predict_proba(test_texts)
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.markdown(
-            """
+        st.markdown("""
         ### Documentation
         - [Quick Start Guide](QUICK_START_GUIDE.md)
         - [Web App README](WEB_APP_README.md)
         - [Month 7: MLP](MONTH_7_OPTIMIZATIONS.md)
-        """
-        )
+        """)
 
     with col2:
-        st.markdown(
-            """
+        st.markdown("""
         ### Deep Learning Docs
         - [Month 8: Computer Vision](MONTH_8_COMPUTER_VISION.md)
         - [Month 9: NLP](MONTH_9_NLP.md)
         - [Month 9 Report](MONTH_9_COMPLETION_REPORT.md)
-        """
-        )
+        """)
 
     with col3:
-        st.markdown(
-            """
+        st.markdown("""
         ### Examples
         - `examples/automl_example.py`
         - `examples/nlp_example.py`
         - `examples/computer_vision_example.py`
-        """
-        )
+        """)
 
     st.success("🎉 Ready to start? Go to **📁 Data Upload** to begin!")
 

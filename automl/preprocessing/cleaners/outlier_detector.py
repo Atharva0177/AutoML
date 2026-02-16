@@ -362,9 +362,9 @@ class OutlierDetector:
             "strategy": self.strategy,
             "action": self.action,
             "threshold": self.threshold,
-            "contamination": self.contamination
-            if self.strategy == "isolation_forest"
-            else None,
+            "contamination": (
+                self.contamination if self.strategy == "isolation_forest" else None
+            ),
             "fitted_columns": self.fitted_columns,
             "outlier_counts": self.outlier_counts,
             "bounds": self.bounds if self.bounds else None,

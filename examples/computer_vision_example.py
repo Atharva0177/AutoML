@@ -133,8 +133,7 @@ print("\n" + "=" * 80)
 print("Example 4: Loading Images from File Paths (Conceptual)")
 print("=" * 80)
 
-print(
-    """
+print("""
 To load images from file paths, organize your data as:
 
 dataset/
@@ -166,8 +165,7 @@ cnn.fit(
     load_from_path=True,  # Load from file paths
     class_names=['cat', 'dog', 'bird']
 )
-"""
-)
+""")
 
 
 # Example 5: Saving and Loading Models
