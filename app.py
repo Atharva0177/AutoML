@@ -2877,10 +2877,11 @@ def train_models_page():
         return
 
     # Set data type and df based on what's loaded
-    if has_image_data and not has_tabular_data:
+    # Prioritize image/text data over tabular (user's most recent upload intent)
+    if has_image_data:
         data_type = "image"
         df = None
-    elif has_text_data and not has_tabular_data:
+    elif has_text_data:
         data_type = "text"
         df = None
     else:
