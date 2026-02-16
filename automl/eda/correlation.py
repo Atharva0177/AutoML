@@ -186,7 +186,7 @@ class CorrelationAnalyzer:
             for k, v in feature_corr_counts.items()
             if v >= 2
         ]
-        features_to_review.sort(key=lambda x: x["n_high_correlations"], reverse=True)
+        features_to_review.sort(key=lambda x: int(x["n_high_correlations"]), reverse=True)
 
         return {
             "detected": len(features_to_review) > 0,

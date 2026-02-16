@@ -58,7 +58,7 @@ class ProblemDetector:
             logger.info(f"Inferred target column: {target_column}")
 
         if target_column is None or target_column not in df.columns:
-            problem_info = {
+            problem_info: Dict[str, Any] = {
                 "problem_type": ProblemType.UNKNOWN.value,
                 "target_column": None,
                 "recommendation": "Please specify a target column",
@@ -119,18 +119,18 @@ class ProblemDetector:
 
         # Check for exact matches (case-insensitive)
         for col in df.columns:
-            if col.lower() in common_targets:
-                return col
+            if str(col).lower() in common_targets:
+                return str(col)
 
         # Check for partial matches
         for col in df.columns:
-            col_lower = col.lower()
+            col_lower = str(col).lower()
             for target in common_targets:
                 if target in col_lower:
-                    return col
+                    return str(col)
 
         # If last column is likely a target (not ID-like, not too many unique values)
-        last_col = df.columns[-1]
+        last_col = str(df.columns[-1])
         if df[last_col].nunique() < len(df):
             return last_col
 
@@ -256,8 +256,8 @@ class ProblemDetector:
         min_count = value_counts.min()
         max_count = value_counts.max()
 
-        ratio = min_count / max_count
-        return ratio >= (1 - threshold)
+        ratio = float(min_count / max_count)
+        return bool(ratio >= (1 - threshold))
 
     def _generate_recommendations(self, problem_info: Dict[str, Any]) -> List[str]:
         """Generate recommendations based on problem type."""
