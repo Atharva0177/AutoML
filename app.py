@@ -116,6 +116,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Premium Card Styles */
 .metric-card {
     background: white;
+    color: #333333;
     padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--card-shadow);
@@ -4082,22 +4083,28 @@ Traditional ML will one-hot encode text, creating 10,000+ features and causing:
                             0.1,
                             disabled=not override_auto,
                         )
-                        dl_config["batch_size"] = st.slider(
+                        batch_size_override = st.slider(
                             "Batch Size",
                             16,
                             256,
-                            dl_config["batch_size"],
+                            dl_config.get("batch_size", 32),
                             16,
                             disabled=not override_auto,
+                            key="dl_tabular_batch_size_override",
                         )
-                        dl_config["max_epochs"] = st.slider(
+                        if override_auto:
+                            dl_config["batch_size"] = batch_size_override
+                        max_epochs_override = st.slider(
                             "Max Epochs",
                             10,
                             200,
-                            dl_config["max_epochs"],
+                            dl_config.get("max_epochs", 50),
                             10,
                             disabled=not override_auto,
+                            key="dl_tabular_max_epochs_override",
                         )
+                        if override_auto:
+                            dl_config["max_epochs"] = max_epochs_override
 
                 elif data_type == "image":
                     col1, col2 = st.columns(2)
@@ -4135,22 +4142,28 @@ Traditional ML will one-hot encode text, creating 10,000+ features and causing:
                             disabled=not override_auto,
                         )
                     with col2:
-                        dl_config["batch_size"] = st.slider(
+                        batch_size_override = st.slider(
                             "Batch Size",
                             8,
                             128,
-                            dl_config["batch_size"],
+                            dl_config.get("batch_size", 32),
                             8,
                             disabled=not override_auto,
+                            key="dl_image_batch_size_override",
                         )
-                        dl_config["max_epochs"] = st.slider(
+                        if override_auto:
+                            dl_config["batch_size"] = batch_size_override
+                        max_epochs_override = st.slider(
                             "Max Epochs",
                             10,
                             100,
-                            dl_config["max_epochs"],
+                            dl_config.get("max_epochs", 50),
                             10,
                             disabled=not override_auto,
+                            key="dl_image_max_epochs_override",
                         )
+                        if override_auto:
+                            dl_config["max_epochs"] = max_epochs_override
 
                 elif data_type == "text":
                     col1, col2 = st.columns(2)
@@ -4178,22 +4191,28 @@ Traditional ML will one-hot encode text, creating 10,000+ features and causing:
                             disabled=not override_auto,
                         )
                     with col2:
-                        dl_config["batch_size"] = st.slider(
+                        batch_size_override = st.slider(
                             "Batch Size",
                             16,
                             128,
-                            dl_config["batch_size"],
+                            dl_config.get("batch_size", 32),
                             16,
                             disabled=not override_auto,
+                            key="dl_text_batch_size_override",
                         )
-                        dl_config["max_epochs"] = st.slider(
+                        if override_auto:
+                            dl_config["batch_size"] = batch_size_override
+                        max_epochs_override = st.slider(
                             "Max Epochs",
                             10,
                             100,
-                            dl_config["max_epochs"],
+                            dl_config.get("max_epochs", 40),
                             10,
                             disabled=not override_auto,
+                            key="dl_text_max_epochs_override",
                         )
+                        if override_auto:
+                            dl_config["max_epochs"] = max_epochs_override
 
         else:
             # Manual configuration (existing detailed UI)
