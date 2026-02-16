@@ -593,9 +593,15 @@ class AutoML:
                 all_results.append(result)
                 trained_models_dict[model.name] = model  # Store trained model
             except Exception as e:
-                logger.error(f"Failed to train {model.name}: {e}")
+                import traceback
+                error_msg = str(e)
+                error_trace = traceback.format_exc()
+                logger.error(f"Failed to train {model.name}: {error_msg}")
+                logger.debug(f"Traceback:\n{error_trace}")
+                if self.verbose:
+                    print(f"\n  ❌ Failed to train {model.name}: {error_msg}")
                 all_results.append(
-                    {"model_name": model.name, "status": "failed", "error": str(e)}
+                    {"model_name": model.name, "status": "failed", "error": error_msg}
                 )
 
         # Create comparison results
@@ -622,7 +628,22 @@ class AutoML:
         rankings = self.model_comparison_results["rankings"]
 
         if not rankings:
-            raise RuntimeError("No models trained successfully")
+            # Collect error messages from failed models
+            all_results = self.model_comparison_results.get("models", [])
+            failed_models = [r for r in all_results if r.get("status") == "failed"]
+            
+            if failed_models:
+                error_summary = "\n\nFailed models:\n"
+                for failed in failed_models[:3]:  # Show up to 3 errors
+                    error_summary += f"  • {failed.get('model_name', 'Unknown')}: {failed.get('error', 'Unknown error')}\n"
+                
+                if len(failed_models) > 3:
+                    error_summary += f"  ... and {len(failed_models) - 3} more\n"
+                
+                raise RuntimeError(f"No models trained successfully.{error_summary}\n"
+                                 f"Please check your data and configuration.")
+            else:
+                raise RuntimeError("No models trained successfully")
 
         best_model_name = rankings[0]["model_name"]
 
