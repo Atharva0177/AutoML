@@ -507,22 +507,42 @@ def get_ml_vs_dl_recommendation(
     else:
         # Check for text-like columns in tabular data
         text_columns = []
+        n_features = len([c for c in df.columns if c != target_column])
+        
         for col in df.columns:
             if col != target_column and df[col].dtype == "object":
                 avg_length = df[col].astype(str).str.len().mean()
                 unique_ratio = df[col].nunique() / len(df)
-                # Text detection: long strings OR high cardinality (>50% unique)
-                if avg_length > 50 or unique_ratio > 0.5:
+                
+                # Strong text signals (SMS, reviews, documents):
+                # 1. Very long text (>100 chars avg) - definitely textual content
+                # 2. Both moderately long (>50 chars) AND high cardinality (>50%) - text data
+                is_strong_text = (avg_length > 100) or (avg_length > 50 and unique_ratio > 0.5)
+                
+                if is_strong_text:
                     text_columns.append(col)
 
-        if text_columns:
+        # Only recommend DL if:
+        # 1. Found strong text columns AND
+        # 2. Text columns are significant portion of dataset (>30% of features)
+        text_ratio = len(text_columns) / max(n_features, 1)
+        
+        if text_columns and text_ratio > 0.3:
             # Strong signal for DL - text data needs NLP models
             score += 75
             reasons.append(
-                f"📄 Found {len(text_columns)} text column(s) - Deep Learning with NLP/embeddings required"
+                f"📄 Found {len(text_columns)} text column(s) with long/unique text - Deep Learning with NLP required"
             )
             details["text_columns"] = len(text_columns)
             details["data_type"] = "Tabular with text (DL recommended)"
+        elif text_columns:
+            # Minor text presence - just note it but don't heavily penalize ML
+            score += 20
+            reasons.append(
+                f"📝 Contains {len(text_columns)} text column(s) - consider feature engineering or DL"
+            )
+            details["text_columns"] = len(text_columns)
+            details["data_type"] = "Tabular with some text"
         else:
             reasons.append(
                 "📊 Structured tabular data - Traditional ML is efficient and interpretable"
