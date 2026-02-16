@@ -28,21 +28,23 @@ y_val = np.random.randint(0, 5, 50)
 
 # Train simple CNN
 cnn = CNNClassifier(
-    architecture='simple',
+    architecture="simple",
     image_size=(32, 32),
     learning_rate=0.001,
     batch_size=16,
     max_epochs=10,
     early_stopping_patience=5,
     augment_data=True,
-    use_gpu=True
+    use_gpu=True,
 )
 
 cnn.fit(
-    X_train, y_train,
-    X_val, y_val,
+    X_train,
+    y_train,
+    X_val,
+    y_val,
     load_from_path=False,  # We're using arrays, not file paths
-    verbose=True
+    verbose=True,
 )
 
 # Predictions
@@ -68,29 +70,24 @@ print("Example 2: Medium CNN Architecture")
 print("=" * 80)
 
 medium_cnn = CNNClassifier(
-    architecture='medium',
+    architecture="medium",
     image_size=(64, 64),
     learning_rate=0.0005,
     batch_size=16,
     max_epochs=10,
     weight_decay=0.0001,
-    lr_scheduler='plateau',
+    lr_scheduler="plateau",
     lr_patience=3,
     lr_factor=0.5,
     gradient_clip_value=1.0,
-    use_gpu=True
+    use_gpu=True,
 )
 
 # Generate larger images
 X_train_64 = np.random.rand(n_samples, 64, 64, 3).astype(np.float32)
 X_val_64 = np.random.rand(50, 64, 64, 3).astype(np.float32)
 
-medium_cnn.fit(
-    X_train_64, y_train,
-    X_val_64, y_val,
-    load_from_path=False,
-    verbose=True
-)
+medium_cnn.fit(X_train_64, y_train, X_val_64, y_val, load_from_path=False, verbose=True)
 
 print(f"\nMedium CNN trained for {medium_cnn.metadata['epochs_trained']} epochs")
 
@@ -102,14 +99,14 @@ print("=" * 80)
 
 # Note: Setting pretrained=True will download ImageNet weights
 resnet_cnn = CNNClassifier(
-    architecture='resnet18',
+    architecture="resnet18",
     pretrained=False,  # Set to True to use ImageNet weights
     freeze_backbone=False,  # Set to True to freeze pretrained layers
     image_size=(224, 224),
     learning_rate=0.001,
     batch_size=8,
     max_epochs=5,
-    use_gpu=True
+    use_gpu=True,
 )
 
 # Generate ImageNet-sized images
@@ -119,10 +116,12 @@ X_val_224 = np.random.rand(30, 224, 224, 3).astype(np.float32)
 y_val_small = np.random.randint(0, 5, 30)
 
 resnet_cnn.fit(
-    X_train_224, y_train_small,
-    X_val_224, y_val_small,
+    X_train_224,
+    y_train_small,
+    X_val_224,
+    y_val_small,
     load_from_path=False,
-    verbose=True
+    verbose=True,
 )
 
 print(f"\nResNet18 trained for {resnet_cnn.metadata['epochs_trained']} epochs")
@@ -133,7 +132,8 @@ print("\n" + "=" * 80)
 print("Example 4: Loading Images from File Paths (Conceptual)")
 print("=" * 80)
 
-print("""
+print(
+    """
 To load images from file paths, organize your data as:
 
 dataset/
@@ -165,7 +165,8 @@ cnn.fit(
     load_from_path=True,  # Load from file paths
     class_names=['cat', 'dog', 'bird']
 )
-""")
+"""
+)
 
 
 # Example 5: Saving and Loading Models
@@ -197,7 +198,7 @@ print("\n" + "=" * 80)
 print("Example 6: Architecture Comparison")
 print("=" * 80)
 
-architectures = ['simple', 'medium']
+architectures = ["simple", "medium"]
 results = {}
 
 X_train_comp = np.random.rand(150, 64, 64, 3).astype(np.float32)
@@ -207,7 +208,7 @@ y_val_comp = np.random.randint(0, 3, 50)
 
 for arch in architectures:
     print(f"\nTraining {arch.upper()} architecture...")
-    
+
     model = CNNClassifier(
         architecture=arch,
         image_size=(64, 64),
@@ -216,38 +217,44 @@ for arch in architectures:
         max_epochs=8,
         early_stopping_patience=4,
         verbose=False,
-        use_gpu=True
+        use_gpu=True,
     )
-    
+
     model.fit(
-        X_train_comp, y_train_comp,
-        X_val_comp, y_val_comp,
+        X_train_comp,
+        y_train_comp,
+        X_val_comp,
+        y_val_comp,
         load_from_path=False,
-        verbose=False
+        verbose=False,
     )
-    
+
     # Evaluate
     predictions = model.predict(X_val_comp, load_from_path=False)
     accuracy = np.mean(predictions == y_val_comp)
-    
+
     results[arch] = {
-        'epochs': model.metadata['epochs_trained'],
-        'best_val_loss': model.metadata['best_val_loss'],
-        'accuracy': accuracy
+        "epochs": model.metadata["epochs_trained"],
+        "best_val_loss": model.metadata["best_val_loss"],
+        "accuracy": accuracy,
     }
-    
-    print(f"{arch.upper()} - Epochs: {results[arch]['epochs']}, "
-          f"Val Loss: {results[arch]['best_val_loss']:.4f}, "
-          f"Accuracy: {results[arch]['accuracy']:.4f}")
+
+    print(
+        f"{arch.upper()} - Epochs: {results[arch]['epochs']}, "
+        f"Val Loss: {results[arch]['best_val_loss']:.4f}, "
+        f"Accuracy: {results[arch]['accuracy']:.4f}"
+    )
 
 print("\n" + "=" * 80)
 print("Comparison Summary")
 print("=" * 80)
 for arch, metrics in results.items():
-    print(f"{arch.upper():10s} | "
-          f"Epochs: {metrics['epochs']:2d} | "
-          f"Loss: {metrics['best_val_loss']:.4f} | "
-          f"Acc: {metrics['accuracy']:.4f}")
+    print(
+        f"{arch.upper():10s} | "
+        f"Epochs: {metrics['epochs']:2d} | "
+        f"Loss: {metrics['best_val_loss']:.4f} | "
+        f"Acc: {metrics['accuracy']:.4f}"
+    )
 
 
 # Example 7: All Optimization Features Combined
@@ -256,36 +263,33 @@ print("Example 7: Full Optimization Stack")
 print("=" * 80)
 
 optimized_cnn = CNNClassifier(
-    architecture='medium',
+    architecture="medium",
     image_size=(64, 64),
     learning_rate=0.001,
     batch_size=16,
     max_epochs=15,
     early_stopping_patience=5,
-    
     # Regularization
     weight_decay=0.0001,
     augment_data=True,
-    
     # Learning rate scheduling
-    lr_scheduler='plateau',
+    lr_scheduler="plateau",
     lr_patience=3,
     lr_factor=0.5,
-    
     # Gradient clipping
     gradient_clip_value=1.0,
-    
     # Optimizer
-    optimizer_name='adamw',
-    
-    use_gpu=True
+    optimizer_name="adamw",
+    use_gpu=True,
 )
 
 optimized_cnn.fit(
-    X_train_comp, y_train_comp,
-    X_val_comp, y_val_comp,
+    X_train_comp,
+    y_train_comp,
+    X_val_comp,
+    y_val_comp,
     load_from_path=False,
-    verbose=True
+    verbose=True,
 )
 
 print(f"\nOptimized model configuration:")

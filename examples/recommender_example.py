@@ -24,10 +24,9 @@ print("=" * 80)
 
 # Create a small classification dataset
 small_df = pd.DataFrame(
-    np.random.randn(200, 8),
-    columns=[f'feature_{i}' for i in range(8)]
+    np.random.randn(200, 8), columns=[f"feature_{i}" for i in range(8)]
 )
-small_df['target'] = np.random.randint(0, 2, 200)
+small_df["target"] = np.random.randint(0, 2, 200)
 
 # Initialize recommender
 recommender = ModelRecommender(verbose=True)
@@ -35,9 +34,7 @@ recommender = ModelRecommender(verbose=True)
 # Analyze dataset and get recommendations
 print("\nAnalyzing dataset characteristics...")
 chars = recommender.analyze_dataset(
-    small_df,
-    target_column='target',
-    problem_type='classification'
+    small_df, target_column="target", problem_type="classification"
 )
 
 print(f"\nDataset Characteristics:")
@@ -72,17 +69,14 @@ print("=" * 80)
 
 # Create a large regression dataset
 large_df = pd.DataFrame(
-    np.random.randn(50000, 25),
-    columns=[f'feature_{i}' for i in range(25)]
+    np.random.randn(50000, 25), columns=[f"feature_{i}" for i in range(25)]
 )
-large_df['target'] = np.random.randn(50000)
+large_df["target"] = np.random.randn(50000)
 
 # Analyze and recommend
 print("\nAnalyzing dataset characteristics...")
 chars = recommender.analyze_dataset(
-    large_df,
-    target_column='target',
-    problem_type='regression'
+    large_df, target_column="target", problem_type="regression"
 )
 
 print(f"\nDataset Characteristics:")
@@ -105,30 +99,24 @@ print("=" * 80)
 
 # Create a medium-sized dataset
 medium_df = pd.DataFrame(
-    np.random.randn(5000, 15),
-    columns=[f'feature_{i}' for i in range(15)]
+    np.random.randn(5000, 15), columns=[f"feature_{i}" for i in range(15)]
 )
-medium_df['target'] = np.random.randint(0, 3, 5000)
+medium_df["target"] = np.random.randint(0, 3, 5000)
 
 print("\nTraining AutoML with automatic model recommendation...")
 print("(The pipeline will analyze the dataset and train only the top 3 models)")
 
 # Initialize AutoML - it automatically uses the recommender
 automl = AutoML(
-    problem_type='classification',
-    use_cross_validation=False,
-    verbose=False
+    problem_type="classification", use_cross_validation=False, verbose=False
 )
 
 # Fit - AutoML will automatically recommend and train top models
-results = automl.fit(
-    medium_df,
-    target_column='target'
-)
+results = automl.fit(medium_df, target_column="target")
 
 print(f"\nAutoML automatically selected and trained:")
-if 'model_comparison' in results and 'rankings' in results['model_comparison']:
-    for result in results['model_comparison']['rankings']:
+if "model_comparison" in results and "rankings" in results["model_comparison"]:
+    for result in results["model_comparison"]["rankings"]:
         print(f"  • {result['model_name']}: {result['score']:.4f}")
 
     print(f"\nBest Model: {results['best_model']}")
@@ -141,20 +129,16 @@ print("=" * 80)
 
 # Create imbalanced dataset
 imbalanced_df = pd.DataFrame(
-    np.random.randn(1000, 10),
-    columns=[f'feature_{i}' for i in range(10)]
+    np.random.randn(1000, 10), columns=[f"feature_{i}" for i in range(10)]
 )
 # 90% class 0, 10% class 1
-imbalanced_df['target'] = np.concatenate([
-    np.zeros(900, dtype=int),
-    np.ones(100, dtype=int)
-])
+imbalanced_df["target"] = np.concatenate(
+    [np.zeros(900, dtype=int), np.ones(100, dtype=int)]
+)
 
 # Analyze
 chars = recommender.analyze_dataset(
-    imbalanced_df,
-    target_column='target',
-    problem_type='classification'
+    imbalanced_df, target_column="target", problem_type="classification"
 )
 
 print(f"\nDataset Characteristics:")
@@ -180,18 +164,15 @@ print("=" * 80)
 
 # Create dataset with missing values
 missing_df = pd.DataFrame(
-    np.random.randn(500, 8),
-    columns=[f'feature_{i}' for i in range(8)]
+    np.random.randn(500, 8), columns=[f"feature_{i}" for i in range(8)]
 )
 # Add missing values (20% in first column)
 missing_df.iloc[::5, 0] = np.nan
-missing_df['target'] = np.random.randint(0, 2, 500)
+missing_df["target"] = np.random.randint(0, 2, 500)
 
 # Analyze
 chars = recommender.analyze_dataset(
-    missing_df,
-    target_column='target',
-    problem_type='classification'
+    missing_df, target_column="target", problem_type="classification"
 )
 
 print(f"\nDataset Characteristics:")
@@ -207,7 +188,8 @@ for i, rec in enumerate(recommendations, 1):
 print("\n" + "=" * 80)
 print("Key Takeaways:")
 print("=" * 80)
-print("""
+print(
+    """
 The Model Recommendation Engine helps you:
 
 1. Save Time: Automatically identifies best models without manual trial & error
@@ -225,4 +207,5 @@ The recommender considers:
 - Problem type (classification vs regression)
 
 Try it with your own datasets!
-""")
+"""
+)

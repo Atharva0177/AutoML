@@ -36,11 +36,13 @@ data = {
 
 # Create target with some relationship to features
 loan_probability = (
-    (data["credit_score"] - 300) / 550 * 0.5 +
-    (data["income"] / 100000) * 0.3 +
-    (data["employment_years"] / 40) * 0.2
+    (data["credit_score"] - 300) / 550 * 0.5
+    + (data["income"] / 100000) * 0.3
+    + (data["employment_years"] / 40) * 0.2
 )
-data["loan_approved"] = (loan_probability + np.random.normal(0, 0.2, n_samples) > 0.5).astype(int)
+data["loan_approved"] = (
+    loan_probability + np.random.normal(0, 0.2, n_samples) > 0.5
+).astype(int)
 
 df = pd.DataFrame(data)
 
@@ -84,13 +86,13 @@ print(f"  Memory usage: {profile['overview']['memory_usage_mb']:.2f} MB")
 print(f"  Duplicate rows: {profile['overview']['duplicate_rows']}")
 
 print("\nMissing Values:")
-missing_info = profile['missing_analysis']
+missing_info = profile["missing_analysis"]
 print(f"  Total missing: {missing_info['total_missing']}")
 print(f"  Missing percentage: {missing_info['missing_percentage']:.2f}%")
 print(f"  Columns with missing values: {missing_info['columns_with_missing']}")
 
 print("\nData Quality Insights:")
-for insight in profile['summary']['insights']:
+for insight in profile["summary"]["insights"]:
     print(f"  - {insight}")
 
 # Step 5: Detect Problem Type
@@ -102,20 +104,20 @@ print(f"\nProblem Type: {problem_info['problem_type'].upper()}")
 print(f"Target Column: {problem_info['target_column']}")
 print(f"Number of Classes: {problem_info.get('n_classes', 'N/A')}")
 
-if 'is_balanced' in problem_info:
-    balance_status = "Balanced" if problem_info['is_balanced'] else "Imbalanced"
+if "is_balanced" in problem_info:
+    balance_status = "Balanced" if problem_info["is_balanced"] else "Imbalanced"
     print(f"Class Balance: {balance_status}")
-    if not problem_info['is_balanced']:
+    if not problem_info["is_balanced"]:
         print(f"Imbalance Ratio: {problem_info.get('imbalance_ratio', 0):.2f}:1")
 
 print("\nClass Distribution:")
-class_dist = problem_info.get('class_distribution', {})
+class_dist = problem_info.get("class_distribution", {})
 for class_name, count in class_dist.items():
-    percentage = (count / problem_info['n_samples']) * 100
+    percentage = (count / problem_info["n_samples"]) * 100
     print(f"  {class_name}: {count} ({percentage:.1f}%)")
 
 print("\nRecommendations:")
-for rec in problem_info.get('recommendations', []):
+for rec in problem_info.get("recommendations", []):
     print(f"  - {rec}")
 
 print("\nSuggested Metrics:", ", ".join(aml.problem_detector.get_suggested_metrics()))
@@ -127,23 +129,29 @@ print("-" * 60)
 corr_analysis = aml.analyze_correlations(threshold=0.5)
 
 print(f"\nAnalyzed {corr_analysis['n_features']} numerical features")
-print(f"Found {len(corr_analysis['high_correlations'])} high correlations (threshold: 0.5)")
+print(
+    f"Found {len(corr_analysis['high_correlations'])} high correlations (threshold: 0.5)"
+)
 
-if corr_analysis['high_correlations']:
+if corr_analysis["high_correlations"]:
     print("\nTop High Correlations:")
-    for corr in corr_analysis['high_correlations'][:5]:
-        print(f"  {corr['feature_1']} <-> {corr['feature_2']}: {corr['correlation']:.3f}")
+    for corr in corr_analysis["high_correlations"][:5]:
+        print(
+            f"  {corr['feature_1']} <-> {corr['feature_2']}: {corr['correlation']:.3f}"
+        )
 
-if 'target_correlations' in corr_analysis and corr_analysis['target_correlations']:
+if "target_correlations" in corr_analysis and corr_analysis["target_correlations"]:
     print("\nTop Features Correlated with Target:")
-    target_corrs = corr_analysis['target_correlations'].get('top_absolute', {})
+    target_corrs = corr_analysis["target_correlations"].get("top_absolute", {})
     for feature, corr_value in list(target_corrs.items())[:5]:
         print(f"  {feature}: {corr_value:.3f}")
 
-if corr_analysis['multicollinearity']['detected']:
-    print(f"\nMulticollinearity Detected: {corr_analysis['multicollinearity']['severity'].upper()}")
+if corr_analysis["multicollinearity"]["detected"]:
+    print(
+        f"\nMulticollinearity Detected: {corr_analysis['multicollinearity']['severity'].upper()}"
+    )
     print("Recommendations:")
-    for rec in corr_analysis['recommendations']:
+    for rec in corr_analysis["recommendations"]:
         print(f"  - {rec}")
 
 # Step 7: Generate Visualizations

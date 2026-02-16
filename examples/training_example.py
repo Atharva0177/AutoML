@@ -20,7 +20,7 @@ from automl.models import (
     RandomForestModel,
     GradientBoostingModel,
     XGBoostModel,
-    LightGBMModel
+    LightGBMModel,
 )
 from automl.training import MetricsCalculator, CrossValidator, Trainer
 
@@ -38,18 +38,13 @@ print("=" * 80)
 
 # Generate classification dataset
 X_class, y_class = make_classification(
-    n_samples=500,
-    n_features=20,
-    n_informative=15,
-    n_classes=2,
-    random_state=42
+    n_samples=500, n_features=20, n_informative=15, n_classes=2, random_state=42
 )
 
 X_class_df = pd.DataFrame(
-    X_class,
-    columns=[f'feature_{i}' for i in range(X_class.shape[1])]
+    X_class, columns=[f"feature_{i}" for i in range(X_class.shape[1])]
 )
-y_class_series = pd.Series(y_class, name='target')
+y_class_series = pd.Series(y_class, name="target")
 
 # Split data
 X_train, X_test, y_train, y_test = train_test_split(
@@ -67,8 +62,7 @@ print(f"  Test: {len(X_test)} samples")
 # Create and train model
 print("\n--- Training Random Forest ---")
 model = RandomForestModel(
-    model_type='classification',
-    hyperparameters={'n_estimators': 100, 'max_depth': 10}
+    model_type="classification", hyperparameters={"n_estimators": 100, "max_depth": 10}
 )
 
 trainer = Trainer(use_cross_validation=False)
@@ -77,13 +71,17 @@ results = trainer.train(model, X_train_sub, y_train_sub, X_val, y_val)
 # Display results
 print(f"\nTraining completed in {results['training_time']:.2f} seconds")
 print("\n--- Training Metrics ---")
-print(MetricsCalculator.format_metrics(
-    results['train_metrics'], 'classification', decimals=4
-))
+print(
+    MetricsCalculator.format_metrics(
+        results["train_metrics"], "classification", decimals=4
+    )
+)
 print("\n--- Validation Metrics ---")
-print(MetricsCalculator.format_metrics(
-    results['val_metrics'], 'classification', decimals=4
-))
+print(
+    MetricsCalculator.format_metrics(
+        results["val_metrics"], "classification", decimals=4
+    )
+)
 
 # Test set evaluation
 y_test_pred = model.predict(X_test)
@@ -92,7 +90,7 @@ test_metrics = MetricsCalculator.calculate_classification_metrics(
     y_test, y_test_pred, y_test_proba
 )
 print("\n--- Test Metrics ---")
-print(MetricsCalculator.format_metrics(test_metrics, 'classification', decimals=4))
+print(MetricsCalculator.format_metrics(test_metrics, "classification", decimals=4))
 
 
 # =============================================================================
@@ -105,29 +103,29 @@ print("=" * 80)
 # Use full training set for CV
 print("\n--- Training XGBoost with 5-Fold Stratified CV ---")
 xgb_model = XGBoostModel(
-    model_type='classification',
-    hyperparameters={'n_estimators': 50, 'learning_rate': 0.1, 'max_depth': 5}
+    model_type="classification",
+    hyperparameters={"n_estimators": 50, "learning_rate": 0.1, "max_depth": 5},
 )
 
-cv_trainer = Trainer(
-    use_cross_validation=True,
-    cv_folds=5,
-    cv_stratified=True
-)
+cv_trainer = Trainer(use_cross_validation=True, cv_folds=5, cv_stratified=True)
 
 cv_results = cv_trainer.train(xgb_model, X_train, y_train)
 
 # Display CV results
-cv_data = cv_results['cross_validation']
+cv_data = cv_results["cross_validation"]
 print(f"\nCross-validation completed in {cv_results['training_time']:.2f} seconds")
-print(f"\nMean Accuracy: {cv_data['mean_accuracy']:.4f} (±{cv_data['std_accuracy']:.4f})")
+print(
+    f"\nMean Accuracy: {cv_data['mean_accuracy']:.4f} (±{cv_data['std_accuracy']:.4f})"
+)
 print(f"Mean F1 Score: {cv_data['mean_f1_score']:.4f} (±{cv_data['std_f1_score']:.4f})")
-print(f"Mean Precision: {cv_data['mean_precision']:.4f} (±{cv_data['std_precision']:.4f})")
+print(
+    f"Mean Precision: {cv_data['mean_precision']:.4f} (±{cv_data['std_precision']:.4f})"
+)
 print(f"Mean Recall: {cv_data['mean_recall']:.4f} (±{cv_data['std_recall']:.4f})")
 
 # Show per-fold results
 print("\n--- Per-Fold Results ---")
-for fold_metrics in cv_data['fold_metrics']:
+for fold_metrics in cv_data["fold_metrics"]:
     print(
         f"Fold {fold_metrics['fold']}: "
         f"F1={fold_metrics['f1_score']:.4f}, "
@@ -146,21 +144,13 @@ print("=" * 80)
 models_to_compare = [
     LogisticRegressionModel(),
     RandomForestModel(
-        model_type='classification',
-        hyperparameters={'n_estimators': 100}
+        model_type="classification", hyperparameters={"n_estimators": 100}
     ),
     GradientBoostingModel(
-        model_type='classification',
-        hyperparameters={'n_estimators': 100}
+        model_type="classification", hyperparameters={"n_estimators": 100}
     ),
-    XGBoostModel(
-        model_type='classification',
-        hyperparameters={'n_estimators': 100}
-    ),
-    LightGBMModel(
-        model_type='classification',
-        hyperparameters={'n_estimators': 100}
-    )
+    XGBoostModel(model_type="classification", hyperparameters={"n_estimators": 100}),
+    LightGBMModel(model_type="classification", hyperparameters={"n_estimators": 100}),
 ]
 
 print(f"\nComparing {len(models_to_compare)} models:")
@@ -177,7 +167,7 @@ comparison_results = comparison_trainer.compare_models(
 print("\n--- Model Rankings ---")
 print(f"{'Rank':<6} {'Model':<20} {'Score':<10} {'Time (s)':<10}")
 print("-" * 50)
-for ranking in comparison_results['rankings']:
+for ranking in comparison_results["rankings"]:
     print(
         f"{ranking['rank']:<6} "
         f"{ranking['model_name']:<20} "
@@ -203,18 +193,11 @@ print("=" * 80)
 
 # Generate regression dataset
 X_reg, y_reg = make_regression(  # type: ignore[assignment]
-    n_samples=500,
-    n_features=20,
-    n_informative=15,
-    noise=10.0,
-    random_state=42
+    n_samples=500, n_features=20, n_informative=15, noise=10.0, random_state=42
 )
 
-X_reg_df = pd.DataFrame(
-    X_reg,
-    columns=[f'feature_{i}' for i in range(X_reg.shape[1])]
-)
-y_reg_series = pd.Series(y_reg, name='target')
+X_reg_df = pd.DataFrame(X_reg, columns=[f"feature_{i}" for i in range(X_reg.shape[1])])
+y_reg_series = pd.Series(y_reg, name="target")
 
 # Split data
 X_train_r, X_test_r, y_train_r, y_test_r = train_test_split(
@@ -229,14 +212,8 @@ print(f"\nDataset: {len(X_train_r_sub)} training, {len(X_val_r)} validation samp
 # Compare regression models
 regression_models = [
     LinearRegressionModel(),
-    RandomForestModel(
-        model_type='regression',
-        hyperparameters={'n_estimators': 100}
-    ),
-    XGBoostModel(
-        model_type='regression',
-        hyperparameters={'n_estimators': 100}
-    )
+    RandomForestModel(model_type="regression", hyperparameters={"n_estimators": 100}),
+    XGBoostModel(model_type="regression", hyperparameters={"n_estimators": 100}),
 ]
 
 print(f"\nComparing {len(regression_models)} regression models:")
@@ -252,7 +229,7 @@ reg_results = reg_trainer.compare_models(
 print("\n--- Regression Model Rankings ---")
 print(f"{'Rank':<6} {'Model':<20} {'R² Score':<12} {'Time (s)':<10}")
 print("-" * 52)
-for ranking in reg_results['rankings']:
+for ranking in reg_results["rankings"]:
     print(
         f"{ranking['rank']:<6} "
         f"{ranking['model_name']:<20} "
@@ -265,12 +242,14 @@ best_reg_model = reg_trainer.get_best_model(reg_results)
 print(f"\nBest regression model: {best_reg_model}")
 
 # Find best model results
-for model_result in reg_results['models']:
-    if model_result['model_name'] == best_reg_model:
+for model_result in reg_results["models"]:
+    if model_result["model_name"] == best_reg_model:
         print("\n--- Best Model Validation Metrics ---")
-        print(MetricsCalculator.format_metrics(
-            model_result['val_metrics'], 'regression', decimals=4
-        ))
+        print(
+            MetricsCalculator.format_metrics(
+                model_result["val_metrics"], "regression", decimals=4
+            )
+        )
         break
 
 
@@ -286,19 +265,14 @@ print("\nComparing models using 5-fold stratified cross-validation")
 cv_comparison_models = [
     LogisticRegressionModel(),
     RandomForestModel(
-        model_type='classification',
-        hyperparameters={'n_estimators': 50, 'max_depth': 10}
+        model_type="classification",
+        hyperparameters={"n_estimators": 50, "max_depth": 10},
     ),
-    XGBoostModel(
-        model_type='classification',
-        hyperparameters={'n_estimators': 50}
-    )
+    XGBoostModel(model_type="classification", hyperparameters={"n_estimators": 50}),
 ]
 
 cv_comparison_trainer = Trainer(
-    use_cross_validation=True,
-    cv_folds=5,
-    cv_stratified=True
+    use_cross_validation=True, cv_folds=5, cv_stratified=True
 )
 
 cv_comp_results = cv_comparison_trainer.compare_models(
@@ -309,14 +283,14 @@ cv_comp_results = cv_comparison_trainer.compare_models(
 print("\n--- Cross-Validation Comparison ---")
 print(f"{'Rank':<6} {'Model':<22} {'Mean Score':<12} {'Std':<10} {'Time (s)':<10}")
 print("-" * 66)
-for ranking in cv_comp_results['rankings']:
+for ranking in cv_comp_results["rankings"]:
     # Find corresponding model results to get std
-    for model_res in cv_comp_results['models']:
-        if model_res['model_name'] == ranking['model_name']:
-            cv_res = model_res.get('cross_validation', {})
-            std = cv_res.get('std_primary_metric', 0)
+    for model_res in cv_comp_results["models"]:
+        if model_res["model_name"] == ranking["model_name"]:
+            cv_res = model_res.get("cross_validation", {})
+            std = cv_res.get("std_primary_metric", 0)
             break
-    
+
     print(
         f"{ranking['rank']:<6} "
         f"{ranking['model_name']:<22} "
@@ -338,23 +312,23 @@ print("\n--- Testing Different CV Strategies ---")
 # Strategy 1: Standard K-Fold
 print("\n1. Standard 5-Fold CV (no stratification):")
 cv_standard = CrossValidator(n_splits=5, stratified=False)
-model_cv = RandomForestModel(model_type='classification')
+model_cv = RandomForestModel(model_type="classification")
 results_standard = cv_standard.cross_validate(model_cv, X_train, y_train)
-print(cv_standard.get_cv_summary(results_standard, 'classification'))
+print(cv_standard.get_cv_summary(results_standard, "classification"))
 
 # Strategy 2: Stratified K-Fold
 print("\n2. Stratified 5-Fold CV:")
 cv_stratified = CrossValidator(n_splits=5, stratified=True)
-model_cv2 = RandomForestModel(model_type='classification')
+model_cv2 = RandomForestModel(model_type="classification")
 results_stratified = cv_stratified.cross_validate(model_cv2, X_train, y_train)
-print(cv_stratified.get_cv_summary(results_stratified, 'classification'))
+print(cv_stratified.get_cv_summary(results_stratified, "classification"))
 
 # Strategy 3: 10-Fold CV
 print("\n3. Stratified 10-Fold CV:")
 cv_10fold = CrossValidator(n_splits=10, stratified=True)
-model_cv3 = RandomForestModel(model_type='classification')
+model_cv3 = RandomForestModel(model_type="classification")
 results_10fold = cv_10fold.cross_validate(model_cv3, X_train, y_train)
-print(cv_10fold.get_cv_summary(results_10fold, 'classification'))
+print(cv_10fold.get_cv_summary(results_10fold, "classification"))
 
 
 print("\n" + "=" * 80)

@@ -23,7 +23,7 @@ from automl.models import (
     RandomForestModel,
     GradientBoostingModel,
     XGBoostModel,
-    LightGBMModel
+    LightGBMModel,
 )
 
 print("=" * 80)
@@ -44,16 +44,16 @@ print(f"\nTotal available models: {len(all_models)}")
 print(f"Models: {', '.join(all_models)}")
 
 # Filter by classification models
-classification_models = ModelRegistry.list_models(model_type='classification')
+classification_models = ModelRegistry.list_models(model_type="classification")
 print(f"\nClassification models: {', '.join(classification_models)}")
 
 # Filter by regression models
-regression_models = ModelRegistry.list_models(model_type='regression')
+regression_models = ModelRegistry.list_models(model_type="regression")
 print(f"Regression models: {', '.join(regression_models)}")
 
 # Get detailed model information
 print("\n--- Model Details: XGBoost ---")
-xgb_info = ModelRegistry.get_model_info('xgboost')
+xgb_info = ModelRegistry.get_model_info("xgboost")
 print(f"Type: {xgb_info['type']}")
 print(f"Description: {xgb_info['description']}")
 print(f"Supports multiclass: {xgb_info['supports_multiclass']}")
@@ -74,32 +74,37 @@ X_class, y_class = make_classification(
     n_informative=15,
     n_redundant=5,
     n_classes=3,
-    random_state=42
+    random_state=42,
 )
 
 # Convert to DataFrame for better feature names
 X_class_df = pd.DataFrame(
-    X_class,
-    columns=[f'feature_{i}' for i in range(X_class.shape[1])]
+    X_class, columns=[f"feature_{i}" for i in range(X_class.shape[1])]
 )
-y_class_series = pd.Series(y_class, name='target')
+y_class_series = pd.Series(y_class, name="target")
 
 # Split data
 X_train_c, X_test_c, y_train_c, y_test_c = train_test_split(
     X_class_df, y_class_series, test_size=0.2, random_state=42, stratify=y_class_series
 )
 
-print(f"\nDataset: {X_train_c.shape[0]} training samples, {X_test_c.shape[0]} test samples")
+print(
+    f"\nDataset: {X_train_c.shape[0]} training samples, {X_test_c.shape[0]} test samples"
+)
 print(f"Features: {X_train_c.shape[1]}")
 print(f"Classes: {sorted(y_class_series.unique())}")
 
 # Define classification models to compare
 classification_model_configs = [
-    ('logistic_regression', LogisticRegressionModel, {}),
-    ('random_forest', RandomForestModel, {'hyperparameters': {'n_estimators': 100}}),
-    ('gradient_boosting', GradientBoostingModel, {'hyperparameters': {'n_estimators': 100}}),
-    ('xgboost', XGBoostModel, {'hyperparameters': {'n_estimators': 100}}),
-    ('lightgbm', LightGBMModel, {'hyperparameters': {'n_estimators': 100}})
+    ("logistic_regression", LogisticRegressionModel, {}),
+    ("random_forest", RandomForestModel, {"hyperparameters": {"n_estimators": 100}}),
+    (
+        "gradient_boosting",
+        GradientBoostingModel,
+        {"hyperparameters": {"n_estimators": 100}},
+    ),
+    ("xgboost", XGBoostModel, {"hyperparameters": {"n_estimators": 100}}),
+    ("lightgbm", LightGBMModel, {"hyperparameters": {"n_estimators": 100}}),
 ]
 
 print("\n--- Training and Evaluating Classification Models ---")
@@ -107,32 +112,30 @@ classification_results = []
 
 for model_name, model_class, kwargs in classification_model_configs:
     print(f"\nTraining {model_name}...")
-    
+
     # Create and train model
-    model = model_class(model_type='classification', **kwargs)
+    model = model_class(model_type="classification", **kwargs)
     model.fit(X_train_c, y_train_c)
-    
+
     # Make predictions
     y_pred = model.predict(X_test_c)
     y_pred_proba = model.predict_proba(X_test_c)
-    
+
     # Calculate metrics
     accuracy = accuracy_score(y_test_c, y_pred)
-    f1 = f1_score(y_test_c, y_pred, average='weighted')
-    
+    f1 = f1_score(y_test_c, y_pred, average="weighted")
+
     print(f"  Accuracy: {accuracy:.4f}")
     print(f"  F1 Score: {f1:.4f}")
-    
-    classification_results.append({
-        'model': model_name,
-        'accuracy': accuracy,
-        'f1_score': f1
-    })
+
+    classification_results.append(
+        {"model": model_name, "accuracy": accuracy, "f1_score": f1}
+    )
 
 # Display results table
 print("\n--- Classification Results Summary ---")
 results_df = pd.DataFrame(classification_results)
-results_df = results_df.sort_values('accuracy', ascending=False)
+results_df = results_df.sort_values("accuracy", ascending=False)
 print(results_df.to_string(index=False))
 
 
@@ -145,35 +148,34 @@ print("=" * 80)
 
 # Generate synthetic regression dataset
 X_reg, y_reg = make_regression(  # type: ignore[assignment]
-    n_samples=1000,
-    n_features=20,
-    n_informative=15,
-    noise=0.1,
-    random_state=42
+    n_samples=1000, n_features=20, n_informative=15, noise=0.1, random_state=42
 )
 
 # Convert to DataFrame
-X_reg_df = pd.DataFrame(
-    X_reg,
-    columns=[f'feature_{i}' for i in range(X_reg.shape[1])]
-)
-y_reg_series = pd.Series(y_reg, name='target')
+X_reg_df = pd.DataFrame(X_reg, columns=[f"feature_{i}" for i in range(X_reg.shape[1])])
+y_reg_series = pd.Series(y_reg, name="target")
 
 # Split data
 X_train_r, X_test_r, y_train_r, y_test_r = train_test_split(
     X_reg_df, y_reg_series, test_size=0.2, random_state=42
 )
 
-print(f"\nDataset: {X_train_r.shape[0]} training samples, {X_test_r.shape[0]} test samples")
+print(
+    f"\nDataset: {X_train_r.shape[0]} training samples, {X_test_r.shape[0]} test samples"
+)
 print(f"Features: {X_train_r.shape[1]}")
 
 # Define regression models to compare
 regression_model_configs = [
-    ('linear_regression', LinearRegressionModel, {}),
-    ('random_forest', RandomForestModel, {'hyperparameters': {'n_estimators': 100}}),
-    ('gradient_boosting', GradientBoostingModel, {'hyperparameters': {'n_estimators': 100}}),
-    ('xgboost', XGBoostModel, {'hyperparameters': {'n_estimators': 100}}),
-    ('lightgbm', LightGBMModel, {'hyperparameters': {'n_estimators': 100}})
+    ("linear_regression", LinearRegressionModel, {}),
+    ("random_forest", RandomForestModel, {"hyperparameters": {"n_estimators": 100}}),
+    (
+        "gradient_boosting",
+        GradientBoostingModel,
+        {"hyperparameters": {"n_estimators": 100}},
+    ),
+    ("xgboost", XGBoostModel, {"hyperparameters": {"n_estimators": 100}}),
+    ("lightgbm", LightGBMModel, {"hyperparameters": {"n_estimators": 100}}),
 ]
 
 print("\n--- Training and Evaluating Regression Models ---")
@@ -181,32 +183,28 @@ regression_results = []
 
 for model_name, model_class, kwargs in regression_model_configs:
     print(f"\nTraining {model_name}...")
-    
+
     # Create and train model
-    model = model_class(model_type='regression', **kwargs)
+    model = model_class(model_type="regression", **kwargs)
     model.fit(X_train_r, y_train_r)
-    
+
     # Make predictions
     y_pred = model.predict(X_test_r)
-    
+
     # Calculate metrics
     mse = mean_squared_error(y_test_r, y_pred)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test_r, y_pred)
-    
+
     print(f"  RMSE: {rmse:.4f}")
     print(f"  R² Score: {r2:.4f}")
-    
-    regression_results.append({
-        'model': model_name,
-        'rmse': rmse,
-        'r2_score': r2
-    })
+
+    regression_results.append({"model": model_name, "rmse": rmse, "r2_score": r2})
 
 # Display results table
 print("\n--- Regression Results Summary ---")
 results_df = pd.DataFrame(regression_results)
-results_df = results_df.sort_values('r2_score', ascending=False)
+results_df = results_df.sort_values("r2_score", ascending=False)
 print(results_df.to_string(index=False))
 
 
@@ -219,7 +217,7 @@ print("=" * 80)
 
 # Train a Random Forest model
 print("\nTraining Random Forest for feature importance analysis...")
-rf_model = RandomForestModel(model_type='classification')
+rf_model = RandomForestModel(model_type="classification")
 rf_model.fit(X_train_c, y_train_c)
 
 # Get feature importance
@@ -247,8 +245,8 @@ print("=" * 80)
 # Train a model
 print("\nTraining XGBoost model...")
 xgb_model = XGBoostModel(
-    model_type='classification',
-    hyperparameters={'n_estimators': 50, 'learning_rate': 0.1}
+    model_type="classification",
+    hyperparameters={"n_estimators": 50, "learning_rate": 0.1},
 )
 xgb_model.fit(X_train_c, y_train_c)
 
@@ -264,7 +262,7 @@ print(f"\nOriginal model accuracy: {original_accuracy:.4f}")
 
 # Load model
 print("\nLoading model from disk...")
-loaded_model = XGBoostModel(model_type='classification')
+loaded_model = XGBoostModel(model_type="classification")
 loaded_model.load(save_path)
 
 # Get predictions from loaded model
@@ -288,17 +286,15 @@ print("\nCreating models dynamically from registry...")
 
 # Create models by name
 models = {
-    'LogReg': ModelRegistry.create_model('logistic_regression'),
-    'RF': ModelRegistry.create_model(
-        'random_forest',
-        model_type='classification',
-        hyperparameters={'n_estimators': 50}
+    "LogReg": ModelRegistry.create_model("logistic_regression"),
+    "RF": ModelRegistry.create_model(
+        "random_forest",
+        model_type="classification",
+        hyperparameters={"n_estimators": 50},
     ),
-    'XGB': ModelRegistry.create_model(
-        'xgboost',
-        model_type='classification',
-        hyperparameters={'n_estimators': 50}
-    )
+    "XGB": ModelRegistry.create_model(
+        "xgboost", model_type="classification", hyperparameters={"n_estimators": 50}
+    ),
 }
 
 print("\n--- Training Models from Registry ---")
@@ -309,8 +305,10 @@ for name, model in models.items():
     acc = accuracy_score(y_test_c, y_pred)
     print(f"  Accuracy: {acc:.4f}")
     metadata = model.get_metadata()
-    print(f"  Metadata: {metadata['metadata']['n_features']} features, "
-          f"{metadata['metadata']['n_samples']} training samples")
+    print(
+        f"  Metadata: {metadata['metadata']['n_features']} features, "
+        f"{metadata['metadata']['n_samples']} training samples"
+    )
 
 
 # =============================================================================
@@ -322,19 +320,16 @@ print("=" * 80)
 
 # Create model with custom hyperparameters
 custom_params = {
-    'n_estimators': 200,
-    'max_depth': 5,
-    'learning_rate': 0.05,
-    'subsample': 0.7
+    "n_estimators": 200,
+    "max_depth": 5,
+    "learning_rate": 0.05,
+    "subsample": 0.7,
 }
 
 print("\nCreating XGBoost with custom parameters:")
 print(f"  {custom_params}")
 
-xgb_custom = XGBoostModel(
-    model_type='classification',
-    hyperparameters=custom_params
-)
+xgb_custom = XGBoostModel(model_type="classification", hyperparameters=custom_params)
 
 # Get current parameters
 params = xgb_custom.get_params()

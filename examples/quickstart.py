@@ -9,10 +9,11 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
+
 def create_sample_data():
     """Create a sample dataset for demonstration."""
     np.random.seed(42)
-    
+
     n_samples = 1000
     data = {
         "age": np.random.randint(18, 80, n_samples),
@@ -21,26 +22,28 @@ def create_sample_data():
         "employment_years": np.random.randint(0, 40, n_samples),
         "num_accounts": np.random.randint(1, 10, n_samples),
         "region": np.random.choice(["North", "South", "East", "West"], n_samples),
-        "education": np.random.choice(["High School", "Bachelor", "Master", "PhD"], n_samples),
+        "education": np.random.choice(
+            ["High School", "Bachelor", "Master", "PhD"], n_samples
+        ),
         "loan_approved": np.random.choice([0, 1], n_samples, p=[0.6, 0.4]),
     }
-    
+
     df = pd.DataFrame(data)
     return df
 
 
 def main():
     """Main function demonstrating AutoML usage."""
-    
+
     print("=" * 60)
     print("AutoML Quick Start Example")
     print("=" * 60)
     print()
-    
+
     # Step 1: Create sample data
     print("Step 1: Creating sample dataset...")
     df = create_sample_data()
-    
+
     # Save to CSV
     data_path = Path("data/sample_loan_data.csv")
     data_path.parent.mkdir(exist_ok=True)
@@ -48,19 +51,19 @@ def main():
     print(f"  ✓ Sample data saved to {data_path}")
     print(f"  ✓ Dataset shape: {df.shape}")
     print()
-    
+
     # Step 2: Initialize AutoML
     print("Step 2: Initializing AutoML...")
     aml = AutoML()
     print("  ✓ AutoML initialized")
     print()
-    
+
     # Step 3: Load data
     print("Step 3: Loading data...")
     aml.load_data(data_path, target_column="loan_approved")
     print("  ✓ Data loaded successfully")
     print()
-    
+
     # Step 4: Get data information
     print("Step 4: Data Summary")
     print("-" * 60)
@@ -71,10 +74,10 @@ def main():
     print(f"Missing Values: {info['missing_percentage']:.1f}%")
     print()
     print("Columns:")
-    for col, dtype in info['dtypes'].items():
+    for col, dtype in info["dtypes"].items():
         print(f"  - {col}: {dtype}")
     print()
-    
+
     # Step 5: Save metadata
     print("Step 5: Saving metadata...")
     output_dir = Path("results/quickstart")
@@ -83,14 +86,14 @@ def main():
     aml.save_metadata(metadata_path)
     print(f"  ✓ Metadata saved to {metadata_path}")
     print()
-    
+
     # Step 6: Future steps (placeholder)
     print("Step 6: Model Training")
     print("-" * 60)
     print("  Note: Model training will be implemented in Phase 1, Month 3")
     print("  For now, data loading and validation are complete!")
     print()
-    
+
     print("=" * 60)
     print("Quick Start Complete!")
     print("=" * 60)

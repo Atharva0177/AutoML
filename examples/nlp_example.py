@@ -44,7 +44,7 @@ val_labels = [1, 0, 1, 0]
 
 # Train LSTM model
 lstm_model = TextClassifier(
-    architecture='lstm',
+    architecture="lstm",
     embedding_dim=50,
     hidden_dim=64,
     num_layers=1,
@@ -54,21 +54,20 @@ lstm_model = TextClassifier(
     batch_size=16,
     max_epochs=10,
     early_stopping_patience=5,
-    use_gpu=True
+    use_gpu=True,
 )
 
 lstm_model.fit(
-    train_texts, train_labels,
-    val_texts, val_labels,
-    class_names=['negative', 'positive'],
-    verbose=True
+    train_texts,
+    train_labels,
+    val_texts,
+    val_labels,
+    class_names=["negative", "positive"],
+    verbose=True,
 )
 
 # Predict on new texts
-test_texts = [
-    "This film is absolutely wonderful!",
-    "Terrible movie, don't watch it."
-]
+test_texts = ["This film is absolutely wonderful!", "Terrible movie, don't watch it."]
 
 predictions = lstm_model.predict(test_texts)
 probabilities = lstm_model.predict_proba(test_texts)
@@ -80,7 +79,7 @@ for i, text in enumerate(test_texts):
     else:
         pred = str(predictions[i])
     conf = probabilities[i][predictions[i]]
-    print(f"  Text: \"{text}\"")
+    print(f'  Text: "{text}"')
     print(f"  Predicted: {pred} (confidence: {conf:.3f})")
 
 print(f"\nModel Info:")
@@ -95,7 +94,7 @@ print("Example 2: GRU Text Classification")
 print("=" * 80)
 
 gru_model = TextClassifier(
-    architecture='gru',
+    architecture="gru",
     embedding_dim=50,
     hidden_dim=64,
     num_layers=2,
@@ -104,7 +103,7 @@ gru_model = TextClassifier(
     max_length=50,
     batch_size=16,
     max_epochs=10,
-    use_gpu=True
+    use_gpu=True,
 )
 
 gru_model.fit(train_texts, train_labels, val_texts, val_labels, verbose=False)
@@ -119,13 +118,13 @@ print("Example 3: CNN for Text Classification")
 print("=" * 80)
 
 cnn_model = TextClassifier(
-    architecture='cnn',
+    architecture="cnn",
     embedding_dim=50,
     hidden_dim=100,  # num_filters
     max_length=50,
     batch_size=16,
     max_epochs=10,
-    use_gpu=True
+    use_gpu=True,
 )
 
 cnn_model.fit(train_texts, train_labels, val_texts, val_labels, verbose=False)
@@ -140,7 +139,7 @@ print("Example 4: Attention-based RNN")
 print("=" * 80)
 
 attention_model = TextClassifier(
-    architecture='attention',
+    architecture="attention",
     embedding_dim=50,
     hidden_dim=64,
     num_layers=1,
@@ -148,12 +147,14 @@ attention_model = TextClassifier(
     max_length=50,
     batch_size=16,
     max_epochs=10,
-    use_gpu=True
+    use_gpu=True,
 )
 
 attention_model.fit(train_texts, train_labels, val_texts, val_labels, verbose=False)
 
-print(f"Attention model trained for {attention_model.metadata['epochs_trained']} epochs")
+print(
+    f"Attention model trained for {attention_model.metadata['epochs_trained']} epochs"
+)
 print(f"Best validation loss: {attention_model.metadata['best_val_loss']:.4f}")
 
 
@@ -187,7 +188,7 @@ val_topics_texts = [
 val_topics_labels = [0, 1, 2, 3]
 
 multiclass_model = TextClassifier(
-    architecture='lstm',
+    architecture="lstm",
     embedding_dim=50,
     hidden_dim=64,
     num_layers=2,
@@ -195,14 +196,16 @@ multiclass_model = TextClassifier(
     max_length=30,
     batch_size=16,
     max_epochs=15,
-    use_gpu=True
+    use_gpu=True,
 )
 
 multiclass_model.fit(
-    topics_texts, topics_labels,
-    val_topics_texts, val_topics_labels,
-    class_names=['Finance', 'Science', 'Sports', 'Technology'],
-    verbose=False
+    topics_texts,
+    topics_labels,
+    val_topics_texts,
+    val_topics_labels,
+    class_names=["Finance", "Science", "Sports", "Technology"],
+    verbose=False,
 )
 
 # Test predictions
@@ -223,7 +226,7 @@ for i, text in enumerate(test_topics):
         pred = str(predictions[i])
         all_probs = {}
     conf = probabilities[i][predictions[i]]
-    print(f"  Text: \"{text}\"")
+    print(f'  Text: "{text}"')
     print(f"  Predicted: {pred} (confidence: {conf:.3f})")
     if all_probs:
         print(f"  All probabilities: {all_probs}")
@@ -234,34 +237,34 @@ print("\n" + "=" * 80)
 print("Example 6: Architecture Comparison")
 print("=" * 80)
 
-architectures = ['lstm', 'gru', 'cnn', 'attention']
+architectures = ["lstm", "gru", "cnn", "attention"]
 results = {}
 
 for arch in architectures:
     print(f"\nTraining {arch.upper()}...")
-    
+
     model = TextClassifier(
         architecture=arch,
         embedding_dim=50,
         hidden_dim=64,
         num_layers=1,
-        bidirectional=True if arch != 'cnn' else False,
+        bidirectional=True if arch != "cnn" else False,
         max_length=50,
         batch_size=16,
         max_epochs=10,
-        use_gpu=True
+        use_gpu=True,
     )
-    
+
     model.fit(train_texts, train_labels, val_texts, val_labels, verbose=False)
-    
+
     # Evaluate
     predictions = model.predict(val_texts)
     accuracy = np.mean(predictions == np.array(val_labels))
-    
+
     results[arch] = {
-        'epochs': model.metadata['epochs_trained'],
-        'best_val_loss': model.metadata['best_val_loss'],
-        'accuracy': accuracy
+        "epochs": model.metadata["epochs_trained"],
+        "best_val_loss": model.metadata["best_val_loss"],
+        "accuracy": accuracy,
     }
 
 print("\n" + "=" * 80)
@@ -302,7 +305,9 @@ print(f"  - Classes: {loaded_model.class_names}")
 
 # Test loaded model
 loaded_predictions = loaded_model.predict(test_texts)
-print(f"\nLoaded model predictions match: {np.all(loaded_predictions == original_predictions)}")
+print(
+    f"\nLoaded model predictions match: {np.all(loaded_predictions == original_predictions)}"
+)
 
 
 # Example 8: Optimization Features
@@ -311,35 +316,29 @@ print("Example 8: Advanced Training Features")
 print("=" * 80)
 
 optimized_model = TextClassifier(
-    architecture='lstm',
+    architecture="lstm",
     embedding_dim=50,
     hidden_dim=64,
     num_layers=2,
     bidirectional=True,
     max_length=50,
-    
     # Optimizer settings
-    optimizer_name='adamw',
+    optimizer_name="adamw",
     learning_rate=0.001,
     weight_decay=0.0001,
-    
     # Learning rate scheduling
-    lr_scheduler='plateau',
+    lr_scheduler="plateau",
     lr_patience=3,
     lr_factor=0.5,
-    
     # Gradient clipping
     gradient_clip_value=1.0,
-    
     # Regularization
     dropout=0.5,
-    
     # Training settings
     batch_size=16,
     max_epochs=20,
     early_stopping_patience=5,
-    
-    use_gpu=True
+    use_gpu=True,
 )
 
 optimized_model.fit(train_texts, train_labels, val_texts, val_labels, verbose=True)

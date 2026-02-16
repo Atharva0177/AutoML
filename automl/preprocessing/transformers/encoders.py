@@ -208,7 +208,9 @@ class CategoricalEncoder:
             # Create column names
             categories = list(encoder.categories_[0])  # type: ignore[attr-defined]
             # Sanitize category names to remove special characters (LightGBM compatibility)
-            sanitized_cats = [self._sanitize_feature_name(str(cat)) for cat in categories]
+            sanitized_cats = [
+                self._sanitize_feature_name(str(cat)) for cat in categories
+            ]
             new_cols = [f"{sanitized_col_name}_{cat}" for cat in sanitized_cats]
 
             # Handle duplicate column names (e.g., when encoding text data)
@@ -248,7 +250,9 @@ class CategoricalEncoder:
             # Create column names (must match the ones from fit_transform)
             categories = list(encoder.categories_[0])  # type: ignore[attr-defined]
             # Sanitize category names to remove special characters (LightGBM compatibility)
-            sanitized_cats = [self._sanitize_feature_name(str(cat)) for cat in categories]
+            sanitized_cats = [
+                self._sanitize_feature_name(str(cat)) for cat in categories
+            ]
             new_cols = [f"{sanitized_col_name}_{cat}" for cat in sanitized_cats]
 
             # Handle duplicate column names (same logic as fit_transform)
