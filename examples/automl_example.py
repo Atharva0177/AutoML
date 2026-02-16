@@ -5,9 +5,9 @@ This example demonstrates the complete AutoML pipeline from
 data loading to model training and prediction.
 """
 
-import pandas as pd
 import numpy as np
-from sklearn.datasets import load_iris, load_diabetes
+import pandas as pd
+from sklearn.datasets import load_diabetes, load_iris
 from sklearn.model_selection import train_test_split
 
 from automl.pipeline import AutoML

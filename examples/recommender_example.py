@@ -5,8 +5,9 @@ This example demonstrates how to use the intelligent model recommendation
 system to automatically select the best models for your dataset.
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from automl.models.recommender import ModelRecommender
 from automl.pipeline.automl import AutoML
 

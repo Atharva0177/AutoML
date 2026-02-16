@@ -5,8 +5,9 @@ This example shows how to use KNN and Iterative (MICE) imputation
 for handling missing values in datasets.
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from automl.preprocessing.cleaners.advanced_imputation import (
     AdvancedMissingValueHandler,
 )

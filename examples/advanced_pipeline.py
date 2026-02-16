@@ -4,12 +4,14 @@ Advanced Example: Custom Data Loading and Validation
 This script shows how to use AutoML with more advanced options.
 """
 
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 from automl import AutoML
 from automl.data.loaders import CSVLoader
 from automl.data.validators import QualityValidator
-import pandas as pd
-import numpy as np
-from pathlib import Path
 
 
 def main():

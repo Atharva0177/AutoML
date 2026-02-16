@@ -4,10 +4,12 @@ Quick Start Example for AutoML
 This script demonstrates basic usage of the AutoML system.
 """
 
-from automl import AutoML
-import pandas as pd
-import numpy as np
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+from automl import AutoML
 
 
 def create_sample_data():

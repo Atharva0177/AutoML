@@ -8,8 +8,8 @@ classification and regression tasks.
 import numpy as np
 import pandas as pd
 from sklearn.datasets import make_classification, make_regression
+from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, r2_score, mean_squared_error
 
 try:
     from automl.models.deep_learning import MLPClassifier, MLPRegressor

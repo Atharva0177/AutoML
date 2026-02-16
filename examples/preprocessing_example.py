@@ -9,15 +9,16 @@ This example shows how to:
 5. Build and use preprocessing pipelines
 """
 
-import numpy as np
-import pandas as pd
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+
 from automl.preprocessing import (
-    MissingValueHandler,
-    NumericalScaler,
     CategoricalEncoder,
     DataSplitter,
+    MissingValueHandler,
+    NumericalScaler,
     PipelineBuilder,
 )
 

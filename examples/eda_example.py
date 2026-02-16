@@ -8,9 +8,11 @@ This example shows how to use the AutoML EDA module to:
 - Generate visualizations
 """
 
-import pandas as pd
-import numpy as np
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 from automl import AutoML
 
 print("=" * 60)

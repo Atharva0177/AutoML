@@ -9,20 +9,20 @@ This example demonstrates:
 5. Analyzing training results
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.datasets import make_classification, make_regression
 from sklearn.model_selection import train_test_split
 
 from automl.models import (
-    LogisticRegressionModel,
-    LinearRegressionModel,
-    RandomForestModel,
     GradientBoostingModel,
-    XGBoostModel,
     LightGBMModel,
+    LinearRegressionModel,
+    LogisticRegressionModel,
+    RandomForestModel,
+    XGBoostModel,
 )
-from automl.training import MetricsCalculator, CrossValidator, Trainer
+from automl.training import CrossValidator, MetricsCalculator, Trainer
 
 print("=" * 80)
 print("AutoML Training Pipeline Examples")

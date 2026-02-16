@@ -4,9 +4,10 @@ NLP Text Classification Examples.
 Demonstrates text classification using RNN, LSTM, GRU, CNN, and Attention models.
 """
 
-import numpy as np
-from pathlib import Path
 import logging
+from pathlib import Path
+
+import numpy as np
 
 logging.basicConfig(level=logging.INFO)
 

@@ -10,20 +10,20 @@ This example demonstrates:
 6. Feature importance extraction
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.datasets import make_classification, make_regression
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
 
 from automl.models import (
-    ModelRegistry,
-    LogisticRegressionModel,
-    LinearRegressionModel,
-    RandomForestModel,
     GradientBoostingModel,
-    XGBoostModel,
     LightGBMModel,
+    LinearRegressionModel,
+    LogisticRegressionModel,
+    ModelRegistry,
+    RandomForestModel,
+    XGBoostModel,
 )
 
 print("=" * 80)

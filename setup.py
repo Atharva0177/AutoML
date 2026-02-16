@@ -1,11 +1,16 @@
 """Setup configuration for AutoML package."""
 
-from setuptools import setup, find_packages
 from pathlib import Path
+
+from setuptools import find_packages, setup
 
 # Read the contents of README file
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text(encoding="utf-8") if (this_directory / "README.md").exists() else ""
+long_description = (
+    (this_directory / "README.md").read_text(encoding="utf-8")
+    if (this_directory / "README.md").exists()
+    else ""
+)
 
 setup(
     name="automl",

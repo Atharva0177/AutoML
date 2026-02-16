@@ -4,9 +4,10 @@ Computer Vision Examples with CNNClassifier.
 Demonstrates image classification using custom and pretrained CNNs.
 """
 
-import numpy as np
-from pathlib import Path
 import logging
+from pathlib import Path
+
+import numpy as np
 
 logging.basicConfig(level=logging.INFO)
 

@@ -7,10 +7,11 @@ This example shows how to use different outlier detection methods:
 - Z-Score
 """
 
-import pandas as pd
-import numpy as np
-from automl.preprocessing.cleaners.outlier_detector import OutlierDetector
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from automl.preprocessing.cleaners.outlier_detector import OutlierDetector
 
 
 def create_sample_data_with_outliers():

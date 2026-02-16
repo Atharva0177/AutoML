@@ -5,8 +5,9 @@ This example demonstrates how to use MLflow for experiment tracking,
 model logging, and model registry with the AutoML pipeline.
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from automl.pipeline.automl import AutoML
 from automl.tracking import MLflowTracker
 

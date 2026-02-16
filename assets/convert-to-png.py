@@ -16,27 +16,29 @@ Usage:
 import os
 from pathlib import Path
 
+
 def convert_svg_to_png():
     """Convert SVG social card to PNG format."""
-    
+
     # Get the script directory
     script_dir = Path(__file__).parent
     svg_file = script_dir / "social-card.svg"
-    
+
     # Check if SVG exists
     if not svg_file.exists():
         print(f"❌ Error: {svg_file} not found!")
         return False
-    
+
     print("🎨 AutoML Social Card PNG Generator")
     print("=" * 50)
     print(f"📂 Working directory: {script_dir}")
     print(f"📄 Source file: {svg_file.name}")
     print()
-    
+
     # Try to import cairosvg
     try:
         import cairosvg
+
         use_cairo = True
         print("✅ Using CairoSVG for conversion (best quality)")
     except (ImportError, OSError) as e:
@@ -56,7 +58,7 @@ def convert_svg_to_png():
         else:
             print("⚠️  CairoSVG not found. Trying alternative method...")
             print("   For best results, install: pip install cairosvg")
-    
+
     # Output files
     outputs = [
         {
@@ -64,83 +66,80 @@ def convert_svg_to_png():
             "width": 1280,
             "height": 640,
             "scale": 1,
-            "description": "Standard resolution"
+            "description": "Standard resolution",
         },
         {
             "name": "social-card@2x.png",
             "width": 2560,
             "height": 1280,
             "scale": 2,
-            "description": "High resolution (Retina)"
-        }
+            "description": "High resolution (Retina)",
+        },
     ]
-    
+
     if use_cairo:
         # Convert using CairoSVG (best quality)
         for output in outputs:
             output_path = script_dir / output["name"]
-            
+
             print(f"\n🖼️  Generating {output['name']}...")
             print(f"   Size: {output['width']}×{output['height']}")
             print(f"   {output['description']}")
-            
+
             try:
                 cairosvg.svg2png(
                     url=str(svg_file),
                     write_to=str(output_path),
-                    output_width=output['width'],
-                    output_height=output['height'],
-                    dpi=96 * output['scale']
+                    output_width=output["width"],
+                    output_height=output["height"],
+                    dpi=96 * output["scale"],
                 )
-                
+
                 file_size = output_path.stat().st_size / 1024
                 print(f"   ✅ Success! ({file_size:.1f} KB)")
-                
+
             except Exception as e:
                 print(f"   ❌ Error: {e}")
                 return False
-    
+
     else:
         # Try alternative method using PIL and svglib
         try:
-            from svglib.svglib import svg2rlg
-            from reportlab.graphics import renderPM
             from PIL import Image
-            
+            from reportlab.graphics import renderPM
+            from svglib.svglib import svg2rlg
+
             print("✅ Using svglib + ReportLab for conversion")
-            
+
             for output in outputs:
                 output_path = script_dir / output["name"]
-                
+
                 print(f"\n🖼️  Generating {output['name']}...")
                 print(f"   Size: {output['width']}×{output['height']}")
                 print(f"   {output['description']}")
-                
+
                 try:
                     # Convert SVG to RLG drawing
                     drawing = svg2rlg(str(svg_file))
-                    
+
                     # Scale the drawing
-                    scale = output['scale']
-                    drawing.width = output['width']
-                    drawing.height = output['height']
+                    scale = output["scale"]
+                    drawing.width = output["width"]
+                    drawing.height = output["height"]
                     drawing.scale(scale, scale)
-                    
+
                     # Render to PNG
                     renderPM.drawToFile(
-                        drawing,
-                        str(output_path),
-                        fmt='PNG',
-                        dpi=96 * scale
+                        drawing, str(output_path), fmt="PNG", dpi=96 * scale
                     )
-                    
+
                     file_size = output_path.stat().st_size / 1024
                     print(f"   ✅ Success! ({file_size:.1f} KB)")
-                    
+
                 except Exception as e:
                     print(f"   ❌ Error: {e}")
                     return False
-                    
+
         except ImportError:
             print("\n❌ No suitable conversion library found!")
             print("\nPlease install one of the following:")
@@ -148,7 +147,7 @@ def convert_svg_to_png():
             print("  Option 2: pip install svglib reportlab pillow")
             print("\nOr use the generate-social-card.html file in your browser.")
             return False
-    
+
     print("\n" + "=" * 50)
     print("✨ Conversion complete!")
     print("\n📊 Generated files:")
@@ -156,13 +155,13 @@ def convert_svg_to_png():
         output_path = script_dir / output["name"]
         if output_path.exists():
             print(f"   ✓ {output['name']} ({output['width']}×{output['height']})")
-    
+
     print("\n🚀 Next steps:")
     print("   1. Go to your GitHub repository settings")
     print("   2. Navigate to 'Social preview' section")
     print("   3. Upload social-card.png")
     print("   4. Save and verify the preview appears when sharing!")
-    
+
     return True
 
 
@@ -177,6 +176,7 @@ def main():
     except Exception as e:
         print(f"\n❌ Unexpected error: {e}")
         import traceback
+
         traceback.print_exc()
         exit(1)
 
