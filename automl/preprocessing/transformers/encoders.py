@@ -206,9 +206,9 @@ class CategoricalEncoder:
             encoded = encoder.fit_transform(df[[col]])
 
             # Create column names
-            categories = encoder.categories_[0]  # type: ignore[attr-defined]
+            categories = list(encoder.categories_[0])  # type: ignore[attr-defined]
             # Sanitize category names to remove special characters (LightGBM compatibility)
-            sanitized_cats = [self._sanitize_feature_name(str(cat)) for cat in categories]  # type: ignore[union-attr]
+            sanitized_cats = [self._sanitize_feature_name(str(cat)) for cat in categories]
             new_cols = [f"{sanitized_col_name}_{cat}" for cat in sanitized_cats]
 
             # Handle duplicate column names (e.g., when encoding text data)
@@ -224,7 +224,7 @@ class CategoricalEncoder:
             # Map original categories to sanitized feature names
             self.category_mappings[col] = {
                 cat: new_col for cat, new_col in zip(categories, new_cols)
-            }  # type: ignore[union-attr]
+            }
 
         # Drop original categorical columns
         df = df.drop(columns=self.categorical_cols)
@@ -246,9 +246,9 @@ class CategoricalEncoder:
             encoded = encoder.transform(df[[col]])  # type: ignore[attr-defined]
 
             # Create column names (must match the ones from fit_transform)
-            categories = encoder.categories_[0]  # type: ignore[attr-defined]
+            categories = list(encoder.categories_[0])  # type: ignore[attr-defined]
             # Sanitize category names to remove special characters (LightGBM compatibility)
-            sanitized_cats = [self._sanitize_feature_name(str(cat)) for cat in categories]  # type: ignore[union-attr]
+            sanitized_cats = [self._sanitize_feature_name(str(cat)) for cat in categories]
             new_cols = [f"{sanitized_col_name}_{cat}" for cat in sanitized_cats]
 
             # Handle duplicate column names (same logic as fit_transform)
