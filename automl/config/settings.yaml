@@ -1,0 +1,140 @@
+# AutoML Configuration File
+# Default settings for the AutoML system
+
+# General Settings
+general:
+  name: "AutoML"
+  version: "0.1.0"
+  random_seed: 42
+  n_jobs: -1  # Use all available cores
+
+# Data Settings
+data:
+  test_size: 0.2
+  validation_size: 0.2
+  min_rows: 10
+  min_columns: 2
+  max_file_size_mb: 1000
+  supported_formats:
+    - csv
+    - parquet
+    - json
+  
+  # Data validation
+  validation:
+    check_duplicates: true
+    check_missing: true
+    check_outliers: true
+    max_missing_ratio: 0.9  # Reject if >90% missing
+
+# Preprocessing Settings
+preprocessing:
+  # Missing value handling
+  missing_values:
+    numerical_strategy: "mean"  # mean, median, mode, knn, iterative
+    categorical_strategy: "mode"  # mode, constant, drop
+    threshold: 0.9  # Drop column if >90% missing
+  
+  # Scaling
+  scaling:
+    method: "standard"  # standard, minmax, robust
+  
+  # Encoding
+  encoding:
+    categorical_method: "onehot"  # onehot, label, target, ordinal
+    max_cardinality: 50  # Use target encoding if cardinality > 50
+  
+  # Outlier handling
+  outliers:
+    method: "iqr"  # iqr, isolation_forest, none
+    action: "clip"  # clip, remove, none
+
+# Model Settings
+models:
+  # List of models to try
+  enabled_models:
+    - logistic_regression
+    - random_forest
+    - gradient_boosting
+    - xgboost
+    - lightgbm
+  
+  # Training settings
+  training:
+    cv_folds: 5
+    stratified: true
+    shuffle: true
+    timeout_seconds: 3600
+    early_stopping: true
+  
+  # Model-specific defaults
+  defaults:
+    random_forest:
+      n_estimators: 100
+      max_depth: null
+      min_samples_split: 2
+    
+    xgboost:
+      n_estimators: 100
+      learning_rate: 0.1
+      max_depth: 6
+    
+    lightgbm:
+      n_estimators: 100
+      learning_rate: 0.1
+      num_leaves: 31
+
+# Evaluation Settings
+evaluation:
+  # Metrics to compute
+  classification_metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - roc_auc
+  
+  regression_metrics:
+    - mse
+    - rmse
+    - mae
+    - r2
+  
+  # Primary metric for model selection
+  primary_metric:
+    classification: "f1"
+    regression: "rmse"
+
+# Hyperparameter Optimization (Phase 2)
+hpo:
+  enabled: false  # Not available in MVP
+  method: "optuna"  # optuna, random, grid
+  n_trials: 100
+  timeout_seconds: 1800
+  
+# Experiment Tracking
+tracking:
+  backend: "mlflow"
+  tracking_uri: "./mlruns"
+  experiment_name: "automl_experiments"
+  log_models: true
+  log_artifacts: true
+
+# Output Settings
+output:
+  save_models: true
+  save_predictions: true
+  save_reports: true
+  results_dir: "./results"
+  models_dir: "./models"
+  
+  # Report formats
+  report_formats:
+    - json
+    - html
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null  # Set to path for file logging

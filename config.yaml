@@ -1,0 +1,19 @@
+problem_type: null
+use_cross_validation: false
+cv_folds: 5
+test_size: 0.2
+validation_size: 0.2
+random_state: 42
+models:
+- logistic_regression
+- random_forest
+- xgboost
+- lightgbm
+preprocessing:
+  missing_values:
+    numerical_strategy: mean
+    categorical_strategy: most_frequent
+  scaling:
+    strategy: standard
+  encoding:
+    strategy: onehot
