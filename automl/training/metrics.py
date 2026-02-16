@@ -92,14 +92,10 @@ class MetricsCalculator:
                 )
             )
             metrics["recall"] = float(
-                recall_score(
-                    y_true_arr, y_pred_arr, average=average, zero_division=0
-                )
+                recall_score(y_true_arr, y_pred_arr, average=average, zero_division=0)
             )
             metrics["f1_score"] = float(
-                f1_score(
-                    y_true_arr, y_pred_arr, average=average, zero_division=0
-                )
+                f1_score(y_true_arr, y_pred_arr, average=average, zero_division=0)
             )
 
         # ROC-AUC (if probabilities provided)
