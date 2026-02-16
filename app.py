@@ -2977,6 +2977,31 @@ Traditional ML will one-hot encode text, creating 10,000+ features and causing:
         test_size = 0.2
         selection_mode = "🤖 Auto (Recommended)"  # Always use auto mode for image/text
 
+        # Show recommendation box for image/text data
+        if data_type == "image":
+            rec_text = "Computer Vision (Deep Learning)"
+            rec_icon = "🖼️"
+            data_info = "Image data requires neural networks for feature extraction"
+        else:  # text
+            rec_text = "NLP Models (Deep Learning)"
+            rec_icon = "📝"
+            data_info = "Text data requires embeddings and sequence models"
+        
+        st.markdown(
+            f"""
+        <div style="background: linear-gradient(135deg, #ff9f66 0%, #ff6b6b 100%); padding: 1.5rem; border-radius: 12px; color: white; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <h3 style="margin-top: 0; color: white;">💡 Training Approach</h3>
+            <div style="font-size: 1.8rem; font-weight: bold; margin: 1rem 0;">
+                {rec_icon} {rec_text}
+            </div>
+            <div style="font-size: 1.1rem; margin-top: 0.5rem;">
+                ✅ Required (100/100) - {data_info}
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
         # Show brief info based on data type
         if data_type == "image":
             image_data = st.session_state.image_data
