@@ -1,12 +1,12 @@
 """Metadata management for datasets."""
 
-from typing import Dict, Any, Optional
-from pathlib import Path
 import json
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, Optional
 
+from automl.utils.helpers import load_json, save_json
 from automl.utils.logger import get_logger
-from automl.utils.helpers import save_json, load_json
 
 logger = get_logger(__name__)
 
@@ -45,25 +45,25 @@ class DatasetMetadata:
         """Get metadata value by key."""
         keys = key.split(".")
         value = self.metadata
-        
+
         for k in keys:
             if isinstance(value, dict) and k in value:
                 value = value[k]
             else:
                 return default
-        
+
         return value
 
     def set(self, key: str, value: Any) -> None:
         """Set metadata value by key."""
         keys = key.split(".")
         metadata = self.metadata
-        
+
         for k in keys[:-1]:
             if k not in metadata:
                 metadata[k] = {}
             metadata = metadata[k]
-        
+
         metadata[keys[-1]] = value
 
     def to_dict(self) -> Dict[str, Any]:
@@ -73,7 +73,7 @@ class DatasetMetadata:
     def save(self, filepath: Path) -> None:
         """
         Save metadata to JSON file.
-        
+
         Args:
             filepath: Path to save metadata
         """
@@ -84,10 +84,10 @@ class DatasetMetadata:
     def load(cls, filepath: Path) -> "DatasetMetadata":
         """
         Load metadata from JSON file.
-        
+
         Args:
             filepath: Path to metadata file
-            
+
         Returns:
             DatasetMetadata instance
         """

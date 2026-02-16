@@ -1,7 +1,8 @@
 """Tests for AutoML core functionality."""
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 from automl import AutoML
 from automl.utils.exceptions import UnsupportedFormatError
@@ -20,7 +21,7 @@ class TestAutoML:
         """Test loading CSV data."""
         aml = AutoML()
         df = aml.load_data(sample_csv)
-        
+
         assert aml.data is not None
         assert len(aml.data) == 100
         assert df is aml.data
@@ -29,14 +30,14 @@ class TestAutoML:
         """Test loading Parquet data."""
         aml = AutoML()
         df = aml.load_data(sample_parquet)
-        
+
         assert aml.data is not None
         assert len(aml.data) == 100
 
     def test_load_unsupported_format(self):
         """Test loading unsupported file format."""
         aml = AutoML()
-        
+
         with pytest.raises(UnsupportedFormatError):
             aml.load_data(Path("test.xlsx"))
 
@@ -45,14 +46,14 @@ class TestAutoML:
         aml = AutoML()
         aml.load_data(sample_csv)
         aml.set_target("target")
-        
+
         assert aml.target_column == "target"
 
     def test_set_invalid_target(self, sample_csv):
         """Test setting invalid target column."""
         aml = AutoML()
         aml.load_data(sample_csv)
-        
+
         with pytest.raises(ValueError, match="not found"):
             aml.set_target("nonexistent")
 
@@ -60,9 +61,9 @@ class TestAutoML:
         """Test getting data information."""
         aml = AutoML()
         aml.load_data(sample_csv, target_column="target")
-        
+
         info = aml.get_data_info()
-        
+
         assert info["shape"] == (100, 5)
         assert info["target_column"] == "target"
         assert "quality_score" in info
@@ -71,8 +72,8 @@ class TestAutoML:
         """Test saving and loading metadata."""
         aml = AutoML()
         aml.load_data(sample_csv)
-        
+
         metadata_path = temp_dir / "metadata.json"
         aml.save_metadata(metadata_path)
-        
+
         assert metadata_path.exists()

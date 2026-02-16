@@ -1,9 +1,10 @@
 """Utility functions for AutoML system."""
 
-from typing import Any, Dict, Optional
 import hashlib
 import json
 from pathlib import Path
+from typing import Any, Dict, Optional
+
 import numpy as np
 import pandas as pd
 
@@ -11,31 +12,31 @@ import pandas as pd
 def generate_hash(data: Any) -> str:
     """
     Generate hash for any data object.
-    
+
     Args:
         data: Data to hash
-        
+
     Returns:
         Hash string
     """
     if isinstance(data, pd.DataFrame):
         # Hash DataFrame by converting to string
-        data_bytes = data.to_json().encode('utf-8')
+        data_bytes = data.to_json().encode("utf-8")
     elif isinstance(data, np.ndarray):
         data_bytes = data.tobytes()
     else:
-        data_bytes = str(data).encode('utf-8')
-    
+        data_bytes = str(data).encode("utf-8")
+
     return hashlib.md5(data_bytes).hexdigest()
 
 
 def ensure_dir(path: Path) -> Path:
     """
     Ensure directory exists, create if not.
-    
+
     Args:
         path: Directory path
-        
+
     Returns:
         Path object
     """
@@ -47,14 +48,14 @@ def ensure_dir(path: Path) -> Path:
 def save_json(data: Dict, filepath: Path) -> None:
     """
     Save dictionary to JSON file.
-    
+
     Args:
         data: Dictionary to save
         filepath: Path to save file
     """
     filepath = Path(filepath)
     ensure_dir(filepath.parent)
-    
+
     with open(filepath, "w") as f:
         json.dump(data, f, indent=2, default=str)
 
@@ -62,10 +63,10 @@ def save_json(data: Dict, filepath: Path) -> None:
 def load_json(filepath: Path) -> Dict:
     """
     Load JSON file to dictionary.
-    
+
     Args:
         filepath: Path to JSON file
-        
+
     Returns:
         Loaded dictionary
     """
@@ -77,10 +78,10 @@ def load_json(filepath: Path) -> Dict:
 def format_bytes(bytes_size: int) -> str:
     """
     Format bytes to human readable format.
-    
+
     Args:
         bytes_size: Size in bytes
-        
+
     Returns:
         Formatted string (e.g., "1.5 GB")
     """
@@ -95,10 +96,10 @@ def format_bytes(bytes_size: int) -> str:
 def format_time(seconds: float) -> str:
     """
     Format seconds to human readable format.
-    
+
     Args:
         seconds: Time in seconds
-        
+
     Returns:
         Formatted string (e.g., "1h 23m 45s")
     """
@@ -116,10 +117,10 @@ def format_time(seconds: float) -> str:
 def get_memory_usage(obj: Any) -> int:
     """
     Get memory usage of object in bytes.
-    
+
     Args:
         obj: Object to measure
-        
+
     Returns:
         Memory usage in bytes
     """
@@ -129,4 +130,5 @@ def get_memory_usage(obj: Any) -> int:
         return obj.nbytes
     else:
         import sys
+
         return sys.getsizeof(obj)

@@ -1,11 +1,11 @@
 """Logging utilities for AutoML system."""
 
 import logging
+import os
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
-import os
-from datetime import datetime
 
 
 class AutoMLLogger:
@@ -22,22 +22,22 @@ class AutoMLLogger:
 
     def __init__(self):
         """Initialize logger if not already initialized."""
-        if not hasattr(self, '_logger') or self._logger is None:
+        if not hasattr(self, "_logger") or self._logger is None:
             self._setup_logger()
 
     def _setup_logger(self) -> None:
         """Setup logging configuration."""
         # Get log level from environment or use INFO
         log_level = os.getenv("AUTOML_LOG_LEVEL", "INFO").upper()
-        
+
         # Create logger
         self._logger = logging.getLogger("automl")
         self._logger.setLevel(getattr(logging, log_level, logging.INFO))
-        
+
         # Avoid duplicate handlers
         if self._logger.handlers:
             return
-        
+
         # Console handler with formatting
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(logging.INFO)
@@ -47,13 +47,13 @@ class AutoMLLogger:
         )
         console_handler.setFormatter(console_format)
         self._logger.addHandler(console_handler)
-        
+
         # File handler if log file specified
         log_file = os.getenv("AUTOML_LOG_FILE")
         if log_file:
             log_path = Path(log_file)
             log_path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             file_handler = logging.FileHandler(log_path)
             file_handler.setLevel(logging.DEBUG)
             file_format = logging.Formatter(
@@ -104,10 +104,10 @@ class AutoMLLogger:
 def get_logger(name: Optional[str] = None) -> logging.Logger:
     """
     Get logger instance for a specific module.
-    
+
     Args:
         name: Name for the logger (typically __name__ of the module)
-        
+
     Returns:
         Logger instance
     """

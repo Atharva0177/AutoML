@@ -1,42 +1,47 @@
 """Test configuration and fixtures."""
 
-import pytest
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
 
 
 @pytest.fixture
 def sample_df():
     """Create a sample DataFrame for testing."""
     np.random.seed(42)
-    return pd.DataFrame({
-        "numeric_1": np.random.randn(100),
-        "numeric_2": np.random.randint(0, 100, 100),
-        "cat_1": np.random.choice(["A", "B", "C"], 100),
-        "cat_2": np.random.choice(["X", "Y"], 100),
-        "target": np.random.choice([0, 1], 100),
-    })
+    return pd.DataFrame(
+        {
+            "numeric_1": np.random.randn(100),
+            "numeric_2": np.random.randint(0, 100, 100),
+            "cat_1": np.random.choice(["A", "B", "C"], 100),
+            "cat_2": np.random.choice(["X", "Y"], 100),
+            "target": np.random.choice([0, 1], 100),
+        }
+    )
 
 
 @pytest.fixture
 def sample_df_with_missing():
     """Create a sample DataFrame with missing values for testing."""
     np.random.seed(42)
-    df = pd.DataFrame({
-        "numeric_1": np.random.randn(100),
-        "numeric_2": np.random.randint(0, 100, 100),
-        "cat_1": np.random.choice(["A", "B", "C"], 100),
-        "cat_2": np.random.choice(["X", "Y"], 100),
-    })
-    
+    df = pd.DataFrame(
+        {
+            "numeric_1": np.random.randn(100),
+            "numeric_2": np.random.randint(0, 100, 100),
+            "cat_1": np.random.choice(["A", "B", "C"], 100),
+            "cat_2": np.random.choice(["X", "Y"], 100),
+        }
+    )
+
     # Introduce missing values
     df.loc[np.random.choice(100, 10, replace=False), "numeric_1"] = np.nan
     df.loc[np.random.choice(100, 10, replace=False), "numeric_2"] = np.nan
     df.loc[np.random.choice(100, 5, replace=False), "cat_1"] = np.nan
     df.loc[np.random.choice(100, 5, replace=False), "cat_2"] = np.nan
-    
+
     return df
 
 

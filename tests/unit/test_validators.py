@@ -1,10 +1,10 @@
 """Tests for data validators."""
 
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 
-from automl.data.validators import DataValidator, SchemaValidator, QualityValidator
+from automl.data.validators import DataValidator, QualityValidator, SchemaValidator
 
 
 class TestDataValidator:
@@ -14,7 +14,7 @@ class TestDataValidator:
         """Test validation of good quality data."""
         validator = DataValidator()
         is_valid, issues = validator.validate(sample_df)
-        
+
         assert is_valid is True
         assert len(issues) == 0
 
@@ -22,20 +22,20 @@ class TestDataValidator:
         """Test validation of too small dataset."""
         validator = DataValidator()
         small_df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
-        
+
         is_valid, issues = validator.validate(small_df)
-        
+
         assert is_valid is False
         assert any("Insufficient rows" in issue for issue in issues)
 
     def test_validate_target(self, sample_df):
         """Test target column validation."""
         validator = DataValidator()
-        
+
         # Valid target
         is_valid, issues = validator.validate_target(sample_df, "target")
         assert is_valid is True
-        
+
         # Invalid target (doesn't exist)
         is_valid, issues = validator.validate_target(sample_df, "nonexistent")
         assert is_valid is False
@@ -49,7 +49,7 @@ class TestSchemaValidator:
         """Test schema inference."""
         validator = SchemaValidator()
         schema = validator.infer_schema(sample_df)
-        
+
         assert "numeric_1" in schema
         assert "cat_1" in schema
         assert schema["numeric_1"]["inferred_type"] == "numeric"
@@ -63,7 +63,7 @@ class TestQualityValidator:
         """Test quality report generation."""
         validator = QualityValidator()
         report = validator.generate_quality_report(sample_df)
-        
+
         assert "overall_score" in report
         assert "dimensions" in report
         assert "missing_values" in report

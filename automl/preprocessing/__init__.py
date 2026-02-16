@@ -10,10 +10,10 @@ This module provides data preprocessing functionality including:
 """
 
 from automl.preprocessing.cleaners.missing_handler import MissingValueHandler
-from automl.preprocessing.transformers.scalers import NumericalScaler
-from automl.preprocessing.transformers.encoders import CategoricalEncoder
-from automl.preprocessing.splitters.train_test_splitter import DataSplitter
 from automl.preprocessing.pipeline_builder import PipelineBuilder
+from automl.preprocessing.splitters.train_test_splitter import DataSplitter
+from automl.preprocessing.transformers.encoders import CategoricalEncoder
+from automl.preprocessing.transformers.scalers import NumericalScaler
 
 __all__ = [
     "MissingValueHandler",

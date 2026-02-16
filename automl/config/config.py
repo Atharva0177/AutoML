@@ -1,9 +1,10 @@
 """Configuration management for AutoML system."""
 
-from typing import Any, Dict, Optional
-from pathlib import Path
-import yaml
 import os
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+import yaml
 from dotenv import load_dotenv
 
 from automl.utils.exceptions import ConfigurationError
@@ -27,7 +28,7 @@ class Config:
     def __init__(self, config_path: Optional[Path] = None):
         """
         Initialize configuration.
-        
+
         Args:
             config_path: Path to custom config file. If None, uses default.
         """
@@ -38,19 +39,19 @@ class Config:
     def _load_config(self, config_path: Optional[Path] = None) -> None:
         """
         Load configuration from YAML file.
-        
+
         Args:
             config_path: Path to config file
         """
         if config_path is None:
             # Use default config
             config_path = Path(__file__).parent / "settings.yaml"
-        
+
         config_path = Path(config_path)
-        
+
         if not config_path.exists():
             raise ConfigurationError(f"Configuration file not found: {config_path}")
-        
+
         try:
             with open(config_path, "r") as f:
                 self._config = yaml.safe_load(f)
@@ -64,7 +65,7 @@ class Config:
         if env_path.exists():
             load_dotenv(env_path)
             logger.info("Environment variables loaded from .env")
-        
+
         # Override config with environment variables
         self._apply_env_overrides()
 
@@ -74,22 +75,22 @@ class Config:
         if os.getenv("AUTOML_LOG_LEVEL"):
             self._config.setdefault("logging", {})
             self._config["logging"]["level"] = os.getenv("AUTOML_LOG_LEVEL")
-        
+
         # Data directory
         if os.getenv("AUTOML_DATA_DIR"):
             self._config.setdefault("data", {})
             self._config["data"]["data_dir"] = os.getenv("AUTOML_DATA_DIR")
-        
+
         # Results directory
         if os.getenv("AUTOML_RESULTS_DIR"):
             self._config.setdefault("output", {})
             self._config["output"]["results_dir"] = os.getenv("AUTOML_RESULTS_DIR")
-        
+
         # MLflow tracking URI
         if os.getenv("MLFLOW_TRACKING_URI"):
             self._config.setdefault("tracking", {})
             self._config["tracking"]["tracking_uri"] = os.getenv("MLFLOW_TRACKING_URI")
-        
+
         # Number of jobs
         n_jobs_env = os.getenv("AUTOML_N_JOBS")
         if n_jobs_env:
@@ -99,47 +100,47 @@ class Config:
     def get(self, key: str, default: Any = None) -> Any:
         """
         Get configuration value by dot-separated key path.
-        
+
         Args:
             key: Dot-separated key path (e.g., "data.test_size")
             default: Default value if key not found
-            
+
         Returns:
             Configuration value
         """
         keys = key.split(".")
         value = self._config
-        
+
         for k in keys:
             if isinstance(value, dict) and k in value:
                 value = value[k]
             else:
                 return default
-        
+
         return value
 
     def set(self, key: str, value: Any) -> None:
         """
         Set configuration value by dot-separated key path.
-        
+
         Args:
             key: Dot-separated key path
             value: Value to set
         """
         keys = key.split(".")
         config = self._config
-        
+
         for k in keys[:-1]:
             if k not in config:
                 config[k] = {}
             config = config[k]
-        
+
         config[keys[-1]] = value
 
     def get_all(self) -> Dict[str, Any]:
         """
         Get all configuration.
-        
+
         Returns:
             Complete configuration dictionary
         """
@@ -148,13 +149,13 @@ class Config:
     def save(self, filepath: Path) -> None:
         """
         Save current configuration to file.
-        
+
         Args:
             filepath: Path to save configuration
         """
         filepath = Path(filepath)
         filepath.parent.mkdir(parents=True, exist_ok=True)
-        
+
         try:
             with open(filepath, "w") as f:
                 yaml.safe_dump(self._config, f, default_flow_style=False)
@@ -165,7 +166,7 @@ class Config:
     def update(self, updates: Dict[str, Any]) -> None:
         """
         Update configuration with new values.
-        
+
         Args:
             updates: Dictionary of updates
         """
@@ -174,7 +175,7 @@ class Config:
     def _deep_update(self, base: Dict, updates: Dict) -> None:
         """
         Recursively update nested dictionary.
-        
+
         Args:
             base: Base dictionary to update
             updates: Updates to apply
